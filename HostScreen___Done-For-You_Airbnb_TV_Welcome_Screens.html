@@ -1,0 +1,2314 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HostScreen — Done-For-You Airbnb TV Welcome Screens | $0/mo Software</title>
+  <meta name="description" content="Turn any rental's existing TV into a personalized boutique-hotel welcome screen with guest names, scannable Wi-Fi QR, stay-only door codes, and a browser phone remote. Installed end-to-end in Hampton Roads & shipped nationwide." />
+
+  <!-- Google Fonts: Plus Jakarta Sans (Headings), Inter (Body), DM Mono (Specs/Labels) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            linen: '#F6F3EC',
+            slateink: '#1E262C',
+            stoneborder: '#D8D1C5',
+            sage: '#4A7C6F',
+            brass: '#C88A4B',
+          },
+          fontFamily: {
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['"DM Mono"', 'monospace'],
+          },
+          boxShadow: {
+            editorial: '0 10px 30px -12px rgba(30, 38, 44, 0.08), 0 2px 6px -1px rgba(30, 38, 44, 0.04)',
+            tvframe: '0 28px 60px -16px rgba(30, 38, 44, 0.38), 0 8px 20px -8px rgba(30, 38, 44, 0.2)',
+            phone: '0 24px 50px -12px rgba(30, 38, 44, 0.28), 0 4px 12px rgba(30, 38, 44, 0.1)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Custom tactile range slider for the ROI calculator */
+    input[type="range"].host-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 9999px;
+      background: #D8D1C5;
+      outline: none;
+    }
+    input[type="range"].host-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 9999px;
+      background: #1E262C;
+      border: 3px solid #C88A4B;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(30, 38, 44, 0.22);
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+    input[type="range"].host-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+      background: #2C3740;
+    }
+    input[type="range"].host-slider::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 9999px;
+      background: #1E262C;
+      border: 3px solid #C88A4B;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(30, 38, 44, 0.22);
+    }
+
+    /* Subtle glass utility for the Smart TV UI */
+    .tv-glass {
+      background: rgba(22, 29, 35, 0.62);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(246, 243, 236, 0.14);
+    }
+    .tv-glass-hover:hover {
+      background: rgba(32, 43, 52, 0.78);
+      border-color: rgba(200, 138, 75, 0.65);
+    }
+    .tv-card-focused {
+      outline: 2px solid #C88A4B;
+      outline-offset: 2px;
+      background: rgba(34, 46, 56, 0.85) !important;
+    }
+
+    /* Film mode subtle toggle transition */
+    .toggle-dot {
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Prevent unwanted horizontal overflow */
+    html, body {
+      overflow-x: hidden;
+    }
+  </style>
+</head>
+<body class="bg-linen text-slateink font-sans antialiased selection:bg-brass/25 selection:text-slateink">
+
+  <!-- =========================================================================
+       1. STICKY CLEAN NAVIGATION BAR
+       ========================================================================= -->
+  <header class="sticky top-0 z-40 bg-linen/90 backdrop-blur-md border-b border-stoneborder/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-18 py-3.5">
+        <!-- Brand Logo (Inline SVG Geometric Mark + Wordmark) -->
+        <a href="#" class="flex items-center gap-3 group focus:outline-none">
+          <svg class="w-10 h-9 shrink-0 transition-transform duration-200 group-hover:scale-[1.03]" viewBox="0 0 48 42" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- TV Bezel -->
+            <rect x="2.5" y="2.5" width="43" height="31" rx="6.5" fill="#F6F3EC" stroke="#1E262C" stroke-width="3.2"/>
+            <!-- TV Stand Neck & Base -->
+            <path d="M18 33.5H30L32 39H16L18 33.5Z" fill="#1E262C"/>
+            <!-- Calm Sage House Roof + Body with Keyhole Silhouette -->
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M24 9.5L13.5 18.2H16.8V28.5H31.2V18.2H34.5L24 9.5ZM24 18.2C22.45 18.2 21.2 19.45 21.2 21C21.2 22.05 21.78 22.96 22.64 23.43L21.7 28.5H26.3L25.36 23.43C26.22 22.96 26.8 22.05 26.8 21C26.8 19.45 25.55 18.2 24 18.2Z" fill="#4A7C6F"/>
+            <!-- Handover Brass Status Dot -->
+            <circle cx="38.5" cy="9.5" r="2.6" fill="#C88A4B"/>
+          </svg>
+          <span class="font-display font-extrabold text-xl tracking-tight text-slateink">HostScreen</span>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-slateink/80">
+          <a href="#demo" class="hover:text-slateink transition-colors">Live Demo</a>
+          <a href="#savings" class="hover:text-slateink transition-colors">Savings Calculator</a>
+          <a href="#tv-check" class="hover:text-slateink transition-colors">TV Check</a>
+          <a href="#pricing" class="hover:text-slateink transition-colors">Pricing</a>
+          <a href="#security" class="hover:text-slateink transition-colors">Security</a>
+        </nav>
+
+        <!-- Primary CTA + Mobile Menu Button -->
+        <div class="flex items-center gap-3">
+          <button type="button" onclick="openPilotModal('Free 1-Unit Pilot')" class="hidden sm:inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-slateink text-linen text-sm font-display font-bold tracking-tight hover:bg-slateink/90 active:scale-[0.98] transition-all shadow-sm">
+            Book Free Pilot
+          </button>
+          <button type="button" id="mobileMenuBtn" aria-label="Toggle Menu" aria-expanded="false" class="md:hidden inline-flex items-center justify-center p-2.5 rounded-xl border border-stoneborder bg-white text-slateink hover:bg-linen transition-colors">
+            <svg id="menuIconOpen" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg id="menuIconClose" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation Drawer -->
+      <div id="mobileMenu" class="hidden md:hidden pb-5 pt-2 border-t border-stoneborder/70">
+        <div class="flex flex-col space-y-2 text-base font-medium">
+          <a href="#demo" class="mobile-nav-link px-3 py-2.5 rounded-xl hover:bg-white transition-colors">Live Demo</a>
+          <a href="#savings" class="mobile-nav-link px-3 py-2.5 rounded-xl hover:bg-white transition-colors">Savings Calculator</a>
+          <a href="#tv-check" class="mobile-nav-link px-3 py-2.5 rounded-xl hover:bg-white transition-colors">TV Check</a>
+          <a href="#pricing" class="mobile-nav-link px-3 py-2.5 rounded-xl hover:bg-white transition-colors">Pricing</a>
+          <a href="#security" class="mobile-nav-link px-3 py-2.5 rounded-xl hover:bg-white transition-colors">Security</a>
+          <button type="button" onclick="openPilotModal('Free 1-Unit Pilot')" class="mt-2 w-full py-3 rounded-xl bg-slateink text-linen font-display font-bold text-center">
+            Book Free Pilot
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- =========================================================================
+         2. HERO SECTION
+         ========================================================================= -->
+    <section class="relative pt-14 pb-16 sm:pt-20 sm:pb-24 overflow-hidden">
+      <!-- Subtle warm sunlit accent backdrop -->
+      <div class="pointer-events-none absolute inset-x-0 top-0 h-80 bg-gradient-to-b from-white/60 via-linen/30 to-transparent"></div>
+
+      <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <!-- DM Mono Location & Service Badge -->
+        <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white border border-stoneborder shadow-sm mb-7">
+          <span class="w-2.5 h-2.5 rounded-full bg-brass shrink-0"></span>
+          <span class="font-mono text-[11px] sm:text-xs font-medium tracking-wider text-slateink/85 uppercase">
+            Hampton Roads White-Glove Install · Nationwide Plug-and-Play Kits
+          </span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="font-display font-extrabold text-4xl sm:text-5xl lg:text-[3.75rem] leading-[1.08] tracking-tight text-slateink max-w-4xl mx-auto">
+          Five-Star Arrivals. <br class="hidden sm:inline" />
+          <span class="text-sage">Zero Monthly</span> Software Fees.
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="mt-6 text-base sm:text-lg lg:text-xl text-slateink/75 max-w-3xl mx-auto leading-relaxed">
+          HostScreen turns any short-term rental’s existing TV into a personalized boutique-hotel welcome screen—with guest names, scannable Wi-Fi QR codes, stay-only door codes, local picks, and a browser-based phone remote. Installed end-to-end for a single one-time fee and <strong class="font-semibold text-slateink">$0/month in software costs</strong>.
+        </p>
+
+        <!-- Hero CTAs -->
+        <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4">
+          <a href="#demo" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-slateink text-linen font-display font-bold text-base hover:bg-slateink/90 active:scale-[0.98] transition-all shadow-editorial">
+            <span>Try the Live TV Demo</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </a>
+          <button type="button" onclick="openPilotModal('Free 1-Unit Pilot')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-white border-2 border-slateink/15 text-slateink font-display font-bold text-base hover:border-brass hover:bg-white/90 active:scale-[0.98] transition-all shadow-sm">
+            <span>Request a Free 1-Unit Pilot</span>
+            <span class="w-2 h-2 rounded-full bg-brass"></span>
+          </button>
+        </div>
+
+        <!-- 4 Proof Strip Pills -->
+        <div class="mt-11 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 max-w-4xl mx-auto">
+          <div class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/85 border border-stoneborder text-xs sm:text-sm font-medium text-slateink">
+            <svg class="w-4 h-4 text-sage shrink-0" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>$0/mo Software Forever</span>
+          </div>
+          <div class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/85 border border-stoneborder text-xs sm:text-sm font-medium text-slateink">
+            <svg class="w-4 h-4 text-sage shrink-0" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>No App Download for Guests</span>
+          </div>
+          <div class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/85 border border-stoneborder text-xs sm:text-sm font-medium text-slateink">
+            <svg class="w-4 h-4 text-sage shrink-0" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>Auto-Clears at Check-Out</span>
+          </div>
+          <div class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/85 border border-stoneborder text-xs sm:text-sm font-medium text-slateink">
+            <svg class="w-4 h-4 text-sage shrink-0" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span>100% Local Privacy Hub</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         3. CENTERPIECE: INTERACTIVE LIVE TV & SYNCED GUEST PHONE REMOTE DEMO
+         ========================================================================= -->
+    <section id="demo" class="py-16 sm:py-24 bg-white border-y border-stoneborder">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Header -->
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-9">
+          <div class="max-w-2xl">
+            <p class="font-mono text-xs uppercase tracking-widest text-brass font-medium mb-2">Interactive Live Simulator</p>
+            <h2 class="font-display font-extrabold text-3xl sm:text-4xl tracking-tight text-slateink">
+              See what your guests see — at every stage of the stay.
+            </h2>
+            <p class="mt-2.5 text-slateink/70 text-sm sm:text-base">
+              Click any card on the TV, adjust the AC or lights from the guest’s phone, test the D-pad and volume, or switch stay phases below. Everything stays synced in real time.
+            </p>
+          </div>
+
+          <!-- Film Mode Toggle Switch -->
+          <div class="flex flex-col sm:items-end gap-2">
+            <div class="inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-linen border border-stoneborder">
+              <div class="text-left">
+                <div class="text-xs font-display font-bold text-slateink flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-brass" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                  Film Mode
+                </div>
+                <div class="text-[11px] text-slateink/65">Masks Wi-Fi & door codes for listing shoots</div>
+              </div>
+              <button type="button" id="filmModeToggle" role="switch" aria-checked="false" aria-label="Toggle Film Mode" class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-stoneborder transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-brass focus:ring-offset-2">
+                <span id="filmModeDot" class="toggle-dot pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 translate-x-0"></span>
+              </button>
+            </div>
+            <div id="filmModeBanner" class="hidden inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sage/15 border border-sage/30 text-sage font-mono text-[11px] font-medium">
+              <span class="w-2 h-2 rounded-full bg-sage"></span>
+              Film Mode Active — Safe for Listing Videos
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase Switcher Bar -->
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-8 p-2 rounded-2xl bg-linen border border-stoneborder/80" role="tablist" aria-label="Stay Phases">
+          <button type="button" data-phase="arrival" class="phase-btn flex-1 min-w-[140px] px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm transition-all bg-slateink text-linen shadow-sm">
+            1. Arrival Day
+          </button>
+          <button type="button" data-phase="during" class="phase-btn flex-1 min-w-[140px] px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm transition-all text-slateink/75 hover:text-slateink hover:bg-white/70">
+            2. During Stay
+          </button>
+          <button type="button" data-phase="checkout" class="phase-btn flex-1 min-w-[140px] px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm transition-all text-slateink/75 hover:text-slateink hover:bg-white/70">
+            3. Last Day (Check-Out)
+          </button>
+          <button type="button" data-phase="between" class="phase-btn flex-1 min-w-[140px] px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm transition-all text-slateink/75 hover:text-slateink hover:bg-white/70">
+            4. Between Guests
+          </button>
+        </div>
+
+        <!-- Split-Screen Simulator Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+          <!-- LEFT (WIDER): Realistic Wall-Mounted 16:9 Smart TV Display -->
+          <div class="lg:col-span-8">
+            <div class="rounded-3xl bg-gradient-to-b from-[#EDE7DC] via-[#F4EFE6] to-[#E6DEC9] border border-stoneborder p-4 sm:p-7 lg:p-8 relative overflow-hidden">
+              <!-- Subtle Architectural Wall Sunlight Beams -->
+              <div class="pointer-events-none absolute -top-24 -right-12 w-72 h-72 rounded-full bg-white/40 blur-3xl"></div>
+              <div class="pointer-events-none absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[#C7B398]/35 to-transparent"></div>
+
+              <!-- Label above TV -->
+              <div class="flex items-center justify-between mb-3 relative z-10">
+                <span class="font-mono text-[11px] uppercase tracking-wider text-slateink/65 flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-sage"></span>
+                  Living Room 55" Smart TV · Live Preview
+                </span>
+                <span id="tvLightBadge" class="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-brass/20 text-slateink border border-brass/40 transition-all">
+                  Room Lights: ON
+                </span>
+              </div>
+
+              <!-- Frameless Smart TV Bezel -->
+              <div class="relative z-10 rounded-2xl bg-[#111518] p-[7px] sm:p-[9px] shadow-tvframe ring-1 ring-black/40">
+                <!-- 16:9 Screen Container (Responsive min-height on mobile so content never clips) -->
+                <div id="tvScreen" class="relative w-full min-h-[430px] sm:min-h-0 sm:aspect-video rounded-xl overflow-hidden bg-[#162027] text-white flex flex-col justify-between p-4 sm:p-6 select-none">
+
+                  <!-- Coastal Architectural Living-Room Background SVG + Warm Gradient -->
+                  <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#23323C] via-[#1C2A32] to-[#12191E]"></div>
+                  <!-- Subtle Warm Room Lights Ambient Glow Overlay (Toggles with Phone Remote!) -->
+                  <div id="tvAmbientGlow" class="pointer-events-none absolute inset-0 transition-opacity duration-500 opacity-100" style="background: radial-gradient(circle at 82% 18%, rgba(200, 138, 75, 0.34), transparent 55%), radial-gradient(circle at 18% 85%, rgba(74, 124, 111, 0.25), transparent 50%);"></div>
+                  <!-- Architectural Coastal Window & Horizon Silhouette SVG -->
+                  <svg class="pointer-events-none absolute inset-0 w-full h-full opacity-20" preserveAspectRatio="none" viewBox="0 0 800 450" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0 320C140 295 280 335 430 310C580 285 690 305 800 288V450H0V320Z" fill="#4A7C6F"/>
+                    <path d="M0 365C180 345 360 385 560 358C680 342 745 352 800 344V450H0V365Z" fill="#1E262C"/>
+                    <circle cx="660" cy="115" r="64" fill="#C88A4B" fill-opacity="0.35"/>
+                    <line x1="0" y1="260" x2="800" y2="260" stroke="#F6F3EC" stroke-opacity="0.12" stroke-width="1"/>
+                  </svg>
+
+                  <!-- TV TOP HEADER BAR -->
+                  <div class="relative z-10 flex items-start justify-between gap-3">
+                    <div>
+                      <div class="flex items-center gap-2 mb-1">
+                        <span class="font-mono text-[10px] sm:text-[11px] uppercase tracking-widest text-brass font-medium">Ocean View Cottage</span>
+                        <span id="tvFilmPill" class="hidden px-2 py-0.5 rounded-full bg-sage text-white font-mono text-[9px] uppercase tracking-wider">Film Mode</span>
+                      </div>
+                      <h3 id="tvGreeting" class="font-display font-extrabold text-xl sm:text-3xl tracking-tight text-white leading-tight">
+                        Welcome, Alex
+                      </h3>
+                      <p id="tvSubtitle" class="text-xs sm:text-sm text-white/75 mt-0.5">
+                        Check-in from 3:00 PM today
+                      </p>
+                    </div>
+
+                    <!-- Glass Clock Widget -->
+                    <div class="tv-glass rounded-xl px-3 py-2 sm:px-4 sm:py-2.5 text-right shrink-0">
+                      <div id="tvClock" class="font-display font-bold text-lg sm:text-2xl tracking-tight text-white leading-none">3:14 PM</div>
+                      <div id="tvDate" class="font-mono text-[10px] text-white/65 mt-1">FRI · OCEAN VIEW, VA</div>
+                    </div>
+                  </div>
+
+                  <!-- TV DYNAMIC CONTENT GRID (Injected cleanly by JS per phase) -->
+                  <div id="tvCardsContainer" class="relative z-10 my-3 sm:my-4">
+                    <!-- Dynamic cards rendered here -->
+                  </div>
+
+                  <!-- TV BOTTOM STREAMING APPS ROW -->
+                  <div id="tvAppsRow" class="relative z-10 flex flex-wrap items-center justify-between gap-2 pt-2.5 border-t border-white/10">
+                    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                      <span class="font-mono text-[10px] uppercase tracking-wider text-white/50 mr-1 hidden sm:inline">Streaming:</span>
+                      <button type="button" onclick="launchStreamingApp('Netflix')" class="px-2.5 py-1 rounded-lg bg-[#E50914]/90 hover:bg-[#E50914] text-white font-display font-bold text-[11px] tracking-tight transition-transform active:scale-95">
+                        Netflix
+                      </button>
+                      <button type="button" onclick="launchStreamingApp('YouTube')" class="px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white/25 text-white font-display font-bold text-[11px] tracking-tight transition-transform active:scale-95">
+                        YouTube
+                      </button>
+                      <button type="button" onclick="launchStreamingApp('Disney+')" class="px-2.5 py-1 rounded-lg bg-[#113CCF]/85 hover:bg-[#113CCF] text-white font-display font-bold text-[11px] tracking-tight transition-transform active:scale-95">
+                        Disney+
+                      </button>
+                      <button type="button" onclick="launchStreamingApp('Prime Video')" class="px-2.5 py-1 rounded-lg bg-[#00A8E1]/85 hover:bg-[#00A8E1] text-white font-display font-bold text-[11px] tracking-tight transition-transform active:scale-95">
+                        Prime Video
+                      </button>
+                    </div>
+                    <span class="font-mono text-[10px] text-white/50">Click any card or app to test</span>
+                  </div>
+
+                  <!-- IN-TV LIVE VOLUME HUD OVERLAY -->
+                  <div id="tvVolumeHud" class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 z-30 tv-glass rounded-2xl px-3 py-3.5 flex flex-col items-center gap-2 opacity-0 transition-opacity duration-200">
+                    <svg class="w-4 h-4 text-brass" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"/></svg>
+                    <div class="w-2 h-24 bg-white/15 rounded-full overflow-hidden flex items-end">
+                      <div id="tvVolumeFill" class="w-full bg-brass rounded-full transition-all duration-150" style="height: 45%;"></div>
+                    </div>
+                    <span id="tvVolumeText" class="font-mono text-[10px] text-white">45</span>
+                  </div>
+
+                  <!-- IN-TV TOAST NOTIFICATION (Streaming Guest Profile / Smart Home Sync) -->
+                  <div id="tvToast" class="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 z-30 w-[92%] max-w-md px-4 py-2.5 rounded-xl bg-slateink/95 border border-brass/60 shadow-xl flex items-center gap-2.5 opacity-0 translate-y-2 transition-all duration-200">
+                    <span class="w-2 h-2 rounded-full bg-sage shrink-0"></span>
+                    <span id="tvToastText" class="text-xs font-medium text-white">Auto-selecting 'Guest' profile — host watch history protected.</span>
+                  </div>
+
+                  <!-- IN-TV DETAIL MODAL SHEET (Opens when any TV card is clicked) -->
+                  <div id="tvDetailModal" class="hidden absolute inset-0 z-40 bg-slateink/85 backdrop-blur-md p-5 sm:p-7 flex flex-col justify-between">
+                    <div class="flex items-start justify-between gap-4 border-b border-white/15 pb-3">
+                      <div>
+                        <span id="tvModalEyebrow" class="font-mono text-[10px] uppercase tracking-widest text-brass">House Detail</span>
+                        <h4 id="tvModalTitle" class="font-display font-bold text-xl sm:text-2xl text-white mt-0.5">Title</h4>
+                      </div>
+                      <button type="button" onclick="closeTvModal()" class="px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-white text-xs font-mono flex items-center gap-1.5 transition-colors">
+                        <span>Close</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    </div>
+                    <div id="tvModalBody" class="my-auto py-3 text-sm text-white/90 overflow-y-auto max-h-[230px]">
+                      <!-- Dynamic modal details -->
+                    </div>
+                    <div class="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-white/55">
+                      <span>Ocean View Cottage · Local Hub</span>
+                      <span>Press Close or Phone 'Home' to return</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Subtle Architectural Walnut Console Underneath TV -->
+              <div class="relative z-10 mt-5 mx-auto max-w-xl flex flex-col items-center">
+                <!-- Clean Cord Cover -->
+                <div class="w-2.5 h-5 bg-[#DDD6CA] border-x border-stoneborder/60 -mt-5 mb-0"></div>
+                <!-- Minimalist Walnut Credenza Top -->
+                <div class="w-full h-4 rounded-t-lg bg-gradient-to-r from-[#8E6542] via-[#A0744E] to-[#845C3B] shadow-md border-t border-[#B98B63]/50"></div>
+                <div class="w-[96%] h-2.5 bg-[#6E4C30]/80 rounded-b-md"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Sleek Smartphone Frame (Browser-Based Guest Remote) -->
+          <div class="lg:col-span-4 flex flex-col items-center">
+            <div class="w-full max-w-[340px] rounded-[2.4rem] bg-slateink p-2.5 shadow-phone ring-1 ring-slateink/20">
+              <!-- Phone Inner Display -->
+              <div class="rounded-[1.9rem] bg-linen overflow-hidden flex flex-col h-[555px] border border-white/10">
+
+                <!-- Phone Status & Safari Browser URL Bar -->
+                <div class="bg-white border-b border-stoneborder px-4 pt-2.5 pb-2.5">
+                  <div class="flex items-center justify-between text-[10px] font-mono text-slateink/60 mb-2">
+                    <span id="phoneClock">3:14</span>
+                    <div class="w-16 h-3.5 rounded-full bg-slateink"></div>
+                    <span>Wi-Fi · 98%</span>
+                  </div>
+                  <div class="flex items-center justify-between gap-2 px-3 py-1.5 rounded-xl bg-linen border border-stoneborder/80">
+                    <div class="flex items-center gap-1.5 text-[11px] font-mono text-slateink/80 truncate">
+                      <svg class="w-3 h-3 text-sage shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                      <span>guest.local/stay</span>
+                    </div>
+                    <span class="px-1.5 py-0.5 rounded bg-sage/15 text-sage font-mono text-[9px] font-medium uppercase">No App</span>
+                  </div>
+                </div>
+
+                <!-- EXPIRED SESSION STATE (Shown only during "Between Guests") -->
+                <div id="phoneExpiredView" class="hidden flex-1 flex flex-col items-center justify-center text-center p-6 bg-linen">
+                  <div class="w-14 h-14 rounded-2xl bg-sage/15 border border-sage/30 flex items-center justify-center text-sage mb-4">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                  </div>
+                  <span class="font-mono text-[10px] uppercase tracking-widest text-sage font-medium mb-1">Auto-Revoked</span>
+                  <h4 class="font-display font-bold text-lg text-slateink leading-snug">
+                    Guest Remote Link Expired at Check-Out
+                  </h4>
+                  <p class="text-xs text-slateink/70 mt-2.5 leading-relaxed">
+                    Previous guest access is automatically shut off. Scan the TV QR code on next arrival to activate a fresh local session.
+                  </p>
+                  <button type="button" onclick="setPhase('arrival')" class="mt-6 px-4 py-2.5 rounded-xl bg-slateink text-linen font-display font-bold text-xs hover:bg-slateink/90 transition-colors">
+                    Switch to Arrival Day to Preview
+                  </button>
+                </div>
+
+                <!-- ACTIVE PHONE INTERFACE -->
+                <div id="phoneActiveView" class="flex-1 flex flex-col overflow-hidden">
+                  <!-- Tab Navigation (Top Pill Bar) -->
+                  <div class="grid grid-cols-4 gap-1 p-2 bg-white border-b border-stoneborder/80">
+                    <button type="button" data-phone-tab="ask" class="phone-tab-btn py-2 rounded-lg font-display font-bold text-[11px] bg-slateink text-linen transition-colors">
+                      Ask & Stay
+                    </button>
+                    <button type="button" data-phone-tab="pad" class="phone-tab-btn py-2 rounded-lg font-display font-bold text-[11px] text-slateink/70 hover:bg-linen transition-colors">
+                      TV Pad
+                    </button>
+                    <button type="button" data-phone-tab="rooms" class="phone-tab-btn py-2 rounded-lg font-display font-bold text-[11px] text-slateink/70 hover:bg-linen transition-colors">
+                      Rooms
+                    </button>
+                    <button type="button" data-phone-tab="dining" class="phone-tab-btn py-2 rounded-lg font-display font-bold text-[11px] text-slateink/70 hover:bg-linen transition-colors">
+                      Dining
+                    </button>
+                  </div>
+
+                  <!-- Scrollable Tab Body -->
+                  <div class="flex-1 overflow-y-auto p-3.5 space-y-3">
+
+                    <!-- TAB 1: ASK & STAY -->
+                    <div id="phoneTab-ask" class="phone-tab-panel space-y-3">
+                      <!-- Stay Summary Card -->
+                      <div class="p-3 rounded-2xl bg-white border border-stoneborder shadow-sm">
+                        <div class="flex items-center justify-between">
+                          <div>
+                            <div class="font-display font-bold text-sm text-slateink">Hi Alex · Ocean View</div>
+                            <div id="phoneStayStatus" class="text-[11px] text-slateink/65 mt-0.5">Check-in from 3:00 PM today</div>
+                          </div>
+                          <span class="px-2 py-0.5 rounded-full bg-sage/15 text-sage font-mono text-[10px]">Active</span>
+                        </div>
+
+                        <!-- Wi-Fi Copy + Stay Door Code Row -->
+                        <div class="mt-3 pt-3 border-t border-stoneborder/70 space-y-2">
+                          <div class="flex items-center justify-between gap-2">
+                            <div class="min-w-0">
+                              <div class="font-mono text-[10px] uppercase text-slateink/55">Guest Wi-Fi</div>
+                              <div id="phoneWifiCreds" class="font-mono text-xs font-medium text-slateink truncate">OceanView_Guest · CoastalBreeze2026</div>
+                            </div>
+                            <button type="button" id="copyWifiBtn" onclick="copyWifiPassword()" class="shrink-0 px-2.5 py-1.5 rounded-lg bg-slateink text-linen font-mono text-[10px] font-medium hover:bg-slateink/90 transition-colors">
+                              Copy Wi-Fi
+                            </button>
+                          </div>
+                          <div class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-linen border border-stoneborder/70">
+                            <span class="text-[11px] font-medium text-slateink/75">Front Door Code</span>
+                            <span id="phoneDoorCode" class="font-mono text-xs font-bold text-slateink">4821#</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Interactive Ask Helper Box -->
+                      <div class="p-3 rounded-2xl bg-white border border-stoneborder shadow-sm">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                          <span class="font-display font-bold text-xs text-slateink">Ask House Helper</span>
+                          <span class="px-2 py-0.5 rounded-full bg-sage/15 text-sage font-mono text-[9px] font-medium">Locked Tier · Guarded</span>
+                        </div>
+                        <p class="text-[11px] text-slateink/65 mb-2.5">Tap a quick question to test local guardrails:</p>
+
+                        <div class="flex flex-col gap-1.5">
+                          <button type="button" onclick="askHelper('dinner')" class="text-left px-3 py-2 rounded-xl bg-linen hover:bg-stoneborder/45 border border-stoneborder/80 text-xs font-medium text-slateink transition-colors">
+                            “Where’s good for dinner?”
+                          </button>
+                          <button type="button" onclick="askHelper('rain')" class="text-left px-3 py-2 rounded-xl bg-linen hover:bg-stoneborder/45 border border-stoneborder/80 text-xs font-medium text-slateink transition-colors">
+                            “Will it rain tomorrow?”
+                          </button>
+                          <button type="button" onclick="askHelper('lights')" class="text-left px-3 py-2 rounded-xl bg-linen hover:bg-stoneborder/45 border border-stoneborder/80 text-xs font-medium text-slateink transition-colors">
+                            “Dim the living room lights”
+                          </button>
+                        </div>
+
+                        <!-- Helper Reply Box -->
+                        <div id="helperReplyBox" class="mt-2.5 p-2.5 rounded-xl bg-slateink text-linen text-[11px] leading-relaxed">
+                          <span class="font-mono text-[9px] uppercase tracking-wider text-brass block mb-1">HostScreen Helper · Code-Verified Guardrails</span>
+                          <span id="helperReplyText">Tap any prompt above. Answers strictly from this property’s local house guide—never leaks host data.</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- TAB 2: TV PAD -->
+                    <div id="phoneTab-pad" class="phone-tab-panel hidden space-y-3">
+                      <div class="p-3.5 rounded-2xl bg-white border border-stoneborder shadow-sm">
+                        <div class="flex items-center justify-between mb-3">
+                          <span class="font-display font-bold text-xs text-slateink">Living Room TV Control</span>
+                          <button type="button" onclick="tvPadHome()" class="px-2.5 py-1 rounded-lg bg-linen border border-stoneborder text-[11px] font-mono font-medium text-slateink hover:bg-stoneborder/40">
+                            Home
+                          </button>
+                        </div>
+
+                        <!-- D-Pad Control -->
+                        <div class="grid grid-cols-3 gap-2 max-w-[190px] mx-auto my-2">
+                          <div></div>
+                          <button type="button" onclick="tvPadNavigate('up')" aria-label="Up" class="h-11 rounded-xl bg-linen border border-stoneborder hover:bg-stoneborder/40 active:scale-95 flex items-center justify-center text-slateink">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+                          </button>
+                          <div></div>
+                          <button type="button" onclick="tvPadNavigate('left')" aria-label="Left" class="h-11 rounded-xl bg-linen border border-stoneborder hover:bg-stoneborder/40 active:scale-95 flex items-center justify-center text-slateink">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                          </button>
+                          <button type="button" onclick="tvPadOk()" class="h-11 rounded-xl bg-slateink text-linen font-display font-bold text-xs hover:bg-slateink/90 active:scale-95 shadow-sm">
+                            OK
+                          </button>
+                          <button type="button" onclick="tvPadNavigate('right')" aria-label="Right" class="h-11 rounded-xl bg-linen border border-stoneborder hover:bg-stoneborder/40 active:scale-95 flex items-center justify-center text-slateink">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                          </button>
+                          <div></div>
+                          <button type="button" onclick="tvPadNavigate('down')" aria-label="Down" class="h-11 rounded-xl bg-linen border border-stoneborder hover:bg-stoneborder/40 active:scale-95 flex items-center justify-center text-slateink">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                          </button>
+                          <div></div>
+                        </div>
+
+                        <!-- Volume Bar Control -->
+                        <div class="mt-4 pt-3 border-t border-stoneborder/70 flex items-center justify-between gap-2">
+                          <button type="button" onclick="adjustTvVolume(-5)" class="flex-1 py-2.5 rounded-xl bg-linen border border-stoneborder font-display font-bold text-xs text-slateink hover:bg-stoneborder/40 active:scale-95">
+                            Vol −
+                          </button>
+                          <span id="phoneVolReadout" class="font-mono text-xs font-medium text-slateink/70 w-12 text-center">45%</span>
+                          <button type="button" onclick="adjustTvVolume(5)" class="flex-1 py-2.5 rounded-xl bg-linen border border-stoneborder font-display font-bold text-xs text-slateink hover:bg-stoneborder/40 active:scale-95">
+                            Vol +
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Quick App Launchers -->
+                      <div class="p-3.5 rounded-2xl bg-white border border-stoneborder shadow-sm">
+                        <div class="font-mono text-[10px] uppercase tracking-wider text-slateink/60 mb-2">Launch With Guest Profile</div>
+                        <div class="grid grid-cols-2 gap-2">
+                          <button type="button" onclick="launchStreamingApp('Netflix')" class="py-2 rounded-xl bg-[#E50914] text-white font-display font-bold text-xs active:scale-95">Netflix</button>
+                          <button type="button" onclick="launchStreamingApp('YouTube')" class="py-2 rounded-xl bg-slateink text-white font-display font-bold text-xs active:scale-95">YouTube</button>
+                          <button type="button" onclick="launchStreamingApp('Disney+')" class="py-2 rounded-xl bg-[#113CCF] text-white font-display font-bold text-xs active:scale-95">Disney+</button>
+                          <button type="button" onclick="launchStreamingApp('Prime Video')" class="py-2 rounded-xl bg-[#00A8E1] text-white font-display font-bold text-xs active:scale-95">Prime Video</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- TAB 3: ROOMS (LIVE-SYNCED SMART HOME) -->
+                    <div id="phoneTab-rooms" class="phone-tab-panel hidden space-y-3">
+                      <div class="px-3 py-2 rounded-xl bg-sage/10 border border-sage/25 text-[11px] text-sage font-medium flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-sage shrink-0"></span>
+                        <span>Live-synced with the TV screen on the left</span>
+                      </div>
+
+                      <!-- Living Room AC -->
+                      <div class="p-3.5 rounded-2xl bg-white border border-stoneborder shadow-sm">
+                        <div class="flex items-center justify-between mb-2">
+                          <div>
+                            <div class="font-display font-bold text-xs text-slateink">Living Room AC</div>
+                            <div class="text-[11px] text-slateink/60">Eco range locked: 66°–76°F</div>
+                          </div>
+                          <span id="phoneAcValue" class="font-display font-extrabold text-xl text-slateink">70°F</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                          <button type="button" onclick="changeAcTemp(-1)" class="py-2.5 rounded-xl bg-linen border border-stoneborder font-display font-bold text-sm text-slateink hover:bg-stoneborder/40 active:scale-95">
+                            − Cooler
+                          </button>
+                          <button type="button" onclick="changeAcTemp(1)" class="py-2.5 rounded-xl bg-linen border border-stoneborder font-display font-bold text-sm text-slateink hover:bg-stoneborder/40 active:scale-95">
+                            + Warmer
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Living Room Lights -->
+                      <div class="p-3.5 rounded-2xl bg-white border border-stoneborder shadow-sm flex items-center justify-between">
+                        <div>
+                          <div class="font-display font-bold text-xs text-slateink">Living Room Lights</div>
+                          <div id="phoneLightsSub" class="text-[11px] text-sage font-medium mt-0.5">Warm Evening · ON</div>
+                        </div>
+                        <button type="button" id="toggleLightsBtn" onclick="toggleLivingLights()" class="px-3.5 py-2 rounded-xl bg-brass text-white font-display font-bold text-xs hover:opacity-90 active:scale-95 transition-all">
+                          Turn Off
+                        </button>
+                      </div>
+
+                      <!-- Pool Heater -->
+                      <div class="p-3.5 rounded-2xl bg-white border border-stoneborder shadow-sm flex items-center justify-between">
+                        <div>
+                          <div class="font-display font-bold text-xs text-slateink">Backyard Pool Heater</div>
+                          <div id="phonePoolSub" class="text-[11px] text-slateink/65 mt-0.5">Current Temp: 81°F · Standby</div>
+                        </div>
+                        <button type="button" id="togglePoolBtn" onclick="togglePoolHeater()" class="px-3.5 py-2 rounded-xl bg-slateink text-linen font-display font-bold text-xs hover:bg-slateink/90 active:scale-95 transition-all">
+                          Heat to 85°
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- TAB 4: DINING (CURATED LOCAL PICKS) -->
+                    <div id="phoneTab-dining" class="phone-tab-panel hidden space-y-2.5">
+                      <div class="font-mono text-[10px] uppercase tracking-wider text-slateink/60 px-1">Host’s Hampton Roads Picks</div>
+
+                      <!-- Spot 1 -->
+                      <div class="p-3 rounded-2xl bg-white border border-stoneborder shadow-sm">
+                        <div class="flex items-start justify-between gap-2">
+                          <div>
+                            <div class="font-display font-bold text-xs text-slateink">Bay Local Eatery</div>
+                            <div class="text-[11px] text-slateink/65">Shore Dr · 6 min · Coastal Brunch</div>
+                          </div>
+                          <span class="font-mono text-[10px] text-brass">★ 4.7</span>
+                        </div>
+                        <button type="button" onclick="bookDiningSpot('Bay Local Eatery', 'bookingMsg1')" class="mt-2.5 w-full py-2 rounded-xl bg-linen border border-stoneborder hover:border-brass font-display font-bold text-[11px] text-slateink transition-colors">
+                          Book a Table
+                        </button>
+                        <div id="bookingMsg1" class="hidden mt-2 p-2 rounded-lg bg-sage/12 border border-sage/30 text-[10px] text-sage font-medium"></div>
+                      </div>
+
+                      <!-- Spot 2 -->
+                      <div class="p-3 rounded-2xl bg-white border border-stoneborder shadow-sm">
+                        <div class="flex items-start justify-between gap-2">
+                          <div>
+                            <div class="font-display font-bold text-xs text-slateink">The Porch on Long Creek</div>
+                            <div class="text-[11px] text-slateink/65">Waterfront · 11 min · Sunset Dinner</div>
+                          </div>
+                          <span class="font-mono text-[10px] text-brass">★ 4.8</span>
+                        </div>
+                        <button type="button" onclick="bookDiningSpot('The Porch on Long Creek', 'bookingMsg2')" class="mt-2.5 w-full py-2 rounded-xl bg-linen border border-stoneborder hover:border-brass font-display font-bold text-[11px] text-slateink transition-colors">
+                          Book a Table
+                        </button>
+                        <div id="bookingMsg2" class="hidden mt-2 p-2 rounded-lg bg-sage/12 border border-sage/30 text-[10px] text-sage font-medium"></div>
+                      </div>
+
+                      <!-- Spot 3 -->
+                      <div class="p-3 rounded-2xl bg-white border border-stoneborder shadow-sm">
+                        <div class="flex items-start justify-between gap-2">
+                          <div>
+                            <div class="font-display font-bold text-xs text-slateink">Waterman’s Surfside Grille</div>
+                            <div class="text-[11px] text-slateink/65">Oceanfront · 15 min · Fresh Seafood</div>
+                          </div>
+                          <span class="font-mono text-[10px] text-brass">★ 4.6</span>
+                        </div>
+                        <button type="button" onclick="bookDiningSpot('Waterman’s Surfside Grille', 'bookingMsg3')" class="mt-2.5 w-full py-2 rounded-xl bg-linen border border-stoneborder hover:border-brass font-display font-bold text-[11px] text-slateink transition-colors">
+                          Book a Table
+                        </button>
+                        <div id="bookingMsg3" class="hidden mt-2 p-2 rounded-lg bg-sage/12 border border-sage/30 text-[10px] text-sage font-medium"></div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="mt-3 text-center font-mono text-[11px] text-slateink/60">
+              Opens in Safari or Chrome · Zero app install required
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         4. INTERACTIVE ROI & "SUBSCRIPTION KILLER" SAVINGS CALCULATOR
+         ========================================================================= -->
+    <section id="savings" class="py-16 sm:py-24 bg-linen">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <p class="font-mono text-xs uppercase tracking-widest text-brass font-medium mb-2">Subscription Killer Math</p>
+          <h2 class="font-display font-extrabold text-3xl sm:text-4xl tracking-tight text-slateink">
+            Stop paying $15/month per TV for a welcome screen.
+          </h2>
+          <p class="mt-3 text-slateink/70 text-sm sm:text-base">
+            Slide to your property count to compare recurring welcome-screen SaaS apps against HostScreen’s one-time hardware & setup model.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-stoneborder shadow-editorial p-6 sm:p-9">
+          <!-- Slider & Quick Presets -->
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5">
+            <div>
+              <label for="propertySlider" class="font-mono text-xs uppercase tracking-wider text-slateink/60 block">Your Portfolio Size</label>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span id="sliderCountDisplay" class="font-display font-extrabold text-4xl sm:text-5xl text-slateink tabular-nums">10</span>
+                <span id="sliderUnitLabel" class="font-display font-bold text-lg text-slateink/70">Properties</span>
+              </div>
+            </div>
+
+            <!-- 3 Quick Preset Buttons -->
+            <div class="flex flex-wrap gap-2">
+              <button type="button" onclick="setSavingsUnits(1)" class="preset-btn px-3.5 py-2 rounded-xl border border-stoneborder bg-linen hover:border-slateink text-xs font-display font-bold text-slateink transition-colors">
+                1 Listing (Solo Host)
+              </button>
+              <button type="button" onclick="setSavingsUnits(10)" class="preset-btn px-3.5 py-2 rounded-xl border border-slateink bg-slateink text-linen text-xs font-display font-bold transition-colors">
+                10 Listings (Co-Host)
+              </button>
+              <button type="button" onclick="setSavingsUnits(30)" class="preset-btn px-3.5 py-2 rounded-xl border border-stoneborder bg-linen hover:border-slateink text-xs font-display font-bold text-slateink transition-colors">
+                30 Listings (Property Manager)
+              </button>
+            </div>
+          </div>
+
+          <div class="mb-8">
+            <input id="propertySlider" type="range" min="1" max="100" value="10" class="host-slider w-full" aria-label="Number of properties" />
+            <div class="flex justify-between font-mono text-[11px] text-slateink/50 mt-2">
+              <span>1 Property</span>
+              <span>25</span>
+              <span>50</span>
+              <span>75</span>
+              <span>100 Properties</span>
+            </div>
+          </div>
+
+          <!-- Comparison Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <!-- Competitor SaaS -->
+            <div class="p-6 rounded-2xl bg-linen border border-stoneborder">
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-display font-bold text-base text-slateink">Typical Recurring TV Apps</span>
+                <span class="font-mono text-xs px-2.5 py-1 rounded-full bg-stoneborder/60 text-slateink/80">$14.99/mo / unit</span>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-baseline justify-between border-b border-stoneborder/80 pb-2.5">
+                  <span class="text-sm text-slateink/70">Year 1 Software Cost</span>
+                  <span id="saasYear1" class="font-mono font-medium text-lg text-slateink tabular-nums">$1,799</span>
+                </div>
+                <div class="flex items-baseline justify-between">
+                  <span class="text-sm font-medium text-slateink">3-Year Total Cost</span>
+                  <span id="saasYear3" class="font-display font-extrabold text-2xl text-slateink tabular-nums">$5,396</span>
+                </div>
+              </div>
+              <p class="mt-4 text-xs text-slateink/60">Plus DIY setup time, cloud accounts, and permanent monthly fees per listing.</p>
+            </div>
+
+            <!-- HostScreen One-Time -->
+            <div class="p-6 rounded-2xl bg-slateink text-linen border border-slateink relative overflow-hidden">
+              <div class="absolute top-0 inset-x-0 h-1 bg-brass"></div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="font-display font-bold text-base text-white">HostScreen One-Time Setup</span>
+                <span id="hostRateBadge" class="font-mono text-xs px-2.5 py-1 rounded-full bg-brass/25 text-brass">$199/unit (5+ rate)</span>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-baseline justify-between border-b border-white/15 pb-2.5">
+                  <span class="text-sm text-white/75">One-Time Hardware + Install</span>
+                  <span id="hostTotalCost" class="font-display font-extrabold text-2xl text-white tabular-nums">$1,990</span>
+                </div>
+                <div class="flex items-baseline justify-between">
+                  <span class="text-sm text-white/75">Ongoing Software Fees</span>
+                  <span class="font-mono font-medium text-lg text-sage">$0 / month forever</span>
+                </div>
+              </div>
+              <p class="mt-4 text-xs text-white/65">Own the hardware hub outright. No SaaS subscriptions—ever.</p>
+            </div>
+          </div>
+
+          <!-- Highlighted Savings Banner -->
+          <div class="mt-6 p-5 sm:p-6 rounded-2xl bg-sage/12 border-2 border-sage/35 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-center sm:text-left">
+              <div class="font-mono text-xs uppercase tracking-wider text-sage font-medium">3-Year Net Savings</div>
+              <div id="savingsHeadline" class="font-display font-extrabold text-2xl sm:text-3xl text-slateink mt-0.5 tabular-nums">
+                You Save $3,406 over 3 years
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="px-4 py-2.5 rounded-xl bg-white border border-brass/50 text-center">
+                <div class="font-mono text-[10px] uppercase text-slateink/60">Break-Even</div>
+                <div id="paybackBadge" class="font-display font-bold text-sm text-slateink">Pays for itself in ~13 months</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         5. KEY FEATURES & SECURITY ARCHITECTURE GRID
+         ========================================================================= -->
+    <section id="security" class="py-16 sm:py-24 bg-white border-y border-stoneborder">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl mb-12">
+          <p class="font-mono text-xs uppercase tracking-widest text-brass font-medium mb-2">Built for Real Turnovers</p>
+          <h2 class="font-display font-extrabold text-3xl sm:text-4xl tracking-tight text-slateink">
+            Hospitality polish on the front. Zero-cloud privacy behind the TV.
+          </h2>
+          <p class="mt-3 text-slateink/70 text-sm sm:text-base">
+            Designed around how short-term rentals actually run—protecting owner privacy, guest security, and your operations team’s inbox.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Card 1 -->
+          <div class="p-6 rounded-2xl bg-linen/55 border border-stoneborder hover:border-brass/60 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-white border border-stoneborder flex items-center justify-center text-sage mb-4 shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-slateink">Auto-Syncs With Bookings</h3>
+            <p class="mt-2 text-sm text-slateink/75 leading-relaxed">
+              Reads upcoming check-in/out dates and guest names automatically—updating the TV across Arrival Day, During Stay, Last Day Check-Out, and Between Guests with zero manual edits.
+            </p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="p-6 rounded-2xl bg-linen/55 border border-stoneborder hover:border-brass/60 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-white border border-stoneborder flex items-center justify-center text-sage mb-4 shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-slateink">100% Local Privacy Hub</h3>
+            <p class="mt-2 text-sm text-slateink/75 leading-relaxed">
+              Wi-Fi passwords, door codes, and guest details live in one local file on a tiny hub tucked behind the TV—no third-party cloud server, no SaaS account, and nothing stored off-property.
+            </p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="p-6 rounded-2xl bg-linen/55 border border-stoneborder hover:border-brass/60 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-white border border-stoneborder flex items-center justify-center text-sage mb-4 shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-slateink">3-Tier Locked-Down AI Helper</h3>
+            <p class="mt-2 text-sm text-slateink/75 leading-relaxed">
+              Ships in <strong>Locked</strong> mode (zero tools), with optional <strong>Plus</strong> (approved Home Assistant/webhook buttons) or <strong>Open</strong> (guarded table booking)—verified against 73 prompt-injection tests.
+            </p>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="p-6 rounded-2xl bg-linen/55 border border-stoneborder hover:border-brass/60 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-white border border-stoneborder flex items-center justify-center text-sage mb-4 shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-slateink">Auto-Guest Streaming Profiles</h3>
+            <p class="mt-2 text-sm text-slateink/75 leading-relaxed">
+              Automatically selects the dedicated <em>Guest</em> profile when guests open Netflix, Prime Video, or Disney+ on Google TV / Android TV—keeping host accounts and watch history clean.
+            </p>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="p-6 rounded-2xl bg-linen/55 border border-stoneborder hover:border-brass/60 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-white border border-stoneborder flex items-center justify-center text-sage mb-4 shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-slateink">Built-In Film Mode</h3>
+            <p class="mt-2 text-sm text-slateink/75 leading-relaxed">
+              Flip one switch while shooting Airbnb listing photos, walkthrough reels, or social media clips—instantly masking your real Wi-Fi password and door codes to clean demo placeholders.
+            </p>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="p-6 rounded-2xl bg-linen/55 border border-stoneborder hover:border-brass/60 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-white border border-stoneborder flex items-center justify-center text-sage mb-4 shadow-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            </div>
+            <h3 class="font-display font-bold text-lg text-slateink">Smart Home Room Controls</h3>
+            <p class="mt-2 text-sm text-slateink/75 leading-relaxed">
+              Expose only the exact rooms and controls you approve—supporting Home Assistant, Philips Hue, Sonos, AirTouch climate zones, and backyard pool temperatures right from the guest’s browser.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         6. INTERACTIVE TV COMPATIBILITY CHECKER
+         ========================================================================= -->
+    <section id="tv-check" class="py-16 sm:py-24 bg-linen">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <p class="font-mono text-xs uppercase tracking-widest text-brass font-medium mb-2">Hardware Compatibility</p>
+          <h2 class="font-display font-extrabold text-3xl sm:text-4xl tracking-tight text-slateink">
+            Works with the TV already on your wall.
+          </h2>
+          <p class="mt-3 text-slateink/70 text-sm sm:text-base">
+            Select your rental’s TV brand below to see how HostScreen installs and configures it.
+          </p>
+        </div>
+
+        <!-- Clickable Brand Pills -->
+        <div class="flex flex-wrap justify-center gap-2.5 mb-8" id="tvBrandPills">
+          <button type="button" data-brand="google" class="tv-brand-pill px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm bg-slateink text-linen border border-slateink shadow-sm transition-all">
+            Google TV / Android TV
+          </button>
+          <button type="button" data-brand="samsung" class="tv-brand-pill px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm bg-white text-slateink border border-stoneborder hover:border-slateink transition-all">
+            Samsung
+          </button>
+          <button type="button" data-brand="lg" class="tv-brand-pill px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm bg-white text-slateink border border-stoneborder hover:border-slateink transition-all">
+            LG
+          </button>
+          <button type="button" data-brand="roku" class="tv-brand-pill px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm bg-white text-slateink border border-stoneborder hover:border-slateink transition-all">
+            Roku
+          </button>
+          <button type="button" data-brand="fire" class="tv-brand-pill px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm bg-white text-slateink border border-stoneborder hover:border-slateink transition-all">
+            Fire TV
+          </button>
+          <button type="button" data-brand="apple" class="tv-brand-pill px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm bg-white text-slateink border border-stoneborder hover:border-slateink transition-all">
+            Apple TV
+          </button>
+          <button type="button" data-brand="hisense" class="tv-brand-pill px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm bg-white text-slateink border border-stoneborder hover:border-slateink transition-all">
+            Hisense / Philips
+          </button>
+          <button type="button" data-brand="vizio" class="tv-brand-pill px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm bg-white text-slateink border border-stoneborder hover:border-slateink transition-all">
+            VIZIO / Older TV
+          </button>
+        </div>
+
+        <!-- Dynamic Compatibility Result Panel -->
+        <div id="tvCompatPanel" class="bg-white rounded-3xl border border-stoneborder shadow-editorial p-6 sm:p-8 transition-all">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-stoneborder/80">
+            <div>
+              <span class="font-mono text-[11px] uppercase tracking-wider text-slateink/55">Selected Display</span>
+              <h3 id="compatBrandName" class="font-display font-extrabold text-2xl text-slateink mt-0.5">Google TV / Android TV</h3>
+            </div>
+            <span id="compatBadge" class="inline-flex items-center gap-2 self-start sm:self-auto px-3.5 py-1.5 rounded-full bg-sage/15 border border-sage/30 text-sage font-mono text-xs font-medium">
+              <span class="w-2 h-2 rounded-full bg-sage"></span>
+              Full Native Support
+            </span>
+          </div>
+
+          <p id="compatDescription" class="mt-5 text-sm sm:text-base text-slateink/80 leading-relaxed">
+            Our cleanest turnkey match. HostScreen pairs directly over your local Wi-Fi for the full welcome screen, browser phone remote, instant wake-on-arrival, and automatic Guest profile selection in Netflix, Prime Video, and Disney+.
+          </p>
+
+          <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="px-4 py-3 rounded-xl bg-linen border border-stoneborder/70 flex items-center justify-between">
+              <span class="text-xs font-medium text-slateink/75">Welcome Screen & QR</span>
+              <span id="compatFeat1" class="font-mono text-xs font-semibold text-sage">Included</span>
+            </div>
+            <div class="px-4 py-3 rounded-xl bg-linen border border-stoneborder/70 flex items-center justify-between">
+              <span class="text-xs font-medium text-slateink/75">Browser Phone Remote</span>
+              <span id="compatFeat2" class="font-mono text-xs font-semibold text-sage">Full Control</span>
+            </div>
+            <div class="px-4 py-3 rounded-xl bg-linen border border-stoneborder/70 flex items-center justify-between">
+              <span class="text-xs font-medium text-slateink/75">Auto Guest Profiles</span>
+              <span id="compatFeat3" class="font-mono text-xs font-semibold text-sage">Supported</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         7. HOW TURNKEY SETUP WORKS (3 STEPS)
+         ========================================================================= -->
+    <section class="py-16 sm:py-24 bg-white border-y border-stoneborder">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <p class="font-mono text-xs uppercase tracking-widest text-brass font-medium mb-2">Zero Tech Stress</p>
+          <h2 class="font-display font-extrabold text-3xl sm:text-4xl tracking-tight text-slateink">
+            From intake to five-star welcome screen in 3 simple steps.
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+          <!-- Step 1 -->
+          <div class="p-7 rounded-3xl bg-linen border border-stoneborder flex flex-col">
+            <div class="flex items-center justify-between mb-5">
+              <span class="font-mono text-sm font-medium px-3 py-1 rounded-full bg-white border border-stoneborder text-brass">STEP 01</span>
+              <span class="font-mono text-xs text-slateink/50">5 mins</span>
+            </div>
+            <h3 class="font-display font-bold text-xl text-slateink">5-Minute Property Intake</h3>
+            <p class="mt-2.5 text-sm text-slateink/75 leading-relaxed">
+              Send us your property name, guest Wi-Fi, check-out checklist, favorite local spots, and TV brand via one straightforward intake form.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="p-7 rounded-3xl bg-linen border border-stoneborder flex flex-col">
+            <div class="flex items-center justify-between mb-5">
+              <span class="font-mono text-sm font-medium px-3 py-1 rounded-full bg-white border border-stoneborder text-brass">STEP 02</span>
+              <span class="font-mono text-xs text-slateink/50">Done for you</span>
+            </div>
+            <h3 class="font-display font-bold text-xl text-slateink">We Pre-Configure Everything</h3>
+            <p class="mt-2.5 text-sm text-slateink/75 leading-relaxed">
+              At our workbench, we load your property photos, house guide, QR codes, and booking sync onto a compact local hardware hub—tested before it ever reaches your door.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="p-7 rounded-3xl bg-linen border border-stoneborder flex flex-col">
+            <div class="flex items-center justify-between mb-5">
+              <span class="font-mono text-sm font-medium px-3 py-1 rounded-full bg-white border border-stoneborder text-brass">STEP 03</span>
+              <span class="font-mono text-xs text-slateink/50">15 mins</span>
+            </div>
+            <h3 class="font-display font-bold text-xl text-slateink">Local Install or 15-Min Plug-In Call</h3>
+            <p class="mt-2.5 text-sm text-slateink/75 leading-relaxed">
+              In Hampton Roads, we install it cleanly behind your TV ourselves. Nationwide, we ship your plug-and-play kit and walk you through a 15-minute handover call with remote monitoring ready.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         8. PRICING & PARTNER ROLLOUT SECTION
+         ========================================================================= -->
+    <section id="pricing" class="py-16 sm:py-24 bg-linen">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <p class="font-mono text-xs uppercase tracking-widest text-brass font-medium mb-2">Transparent One-Time Pricing</p>
+          <h2 class="font-display font-extrabold text-3xl sm:text-4xl tracking-tight text-slateink">
+            Built for solo hosts and 30+ unit portfolios alike.
+          </h2>
+          <p class="mt-3 text-slateink/70 text-sm sm:text-base">
+            Every option includes pre-configured hardware, end-to-end setup, and <strong>$0/month software fees</strong>.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          <!-- Card 1: Single Property -->
+          <div class="bg-white rounded-3xl border border-stoneborder shadow-editorial p-7 flex flex-col justify-between">
+            <div>
+              <div class="font-mono text-xs uppercase tracking-wider text-slateink/60 mb-2">Individual Hosts</div>
+              <h3 class="font-display font-extrabold text-2xl text-slateink">Single Property</h3>
+              <div class="mt-4 flex items-baseline gap-2">
+                <span class="font-display font-extrabold text-4xl text-slateink">$299</span>
+                <span class="font-mono text-xs text-slateink/65">one-time · $0/mo software</span>
+              </div>
+              <p class="mt-3 text-sm text-slateink/70">
+                Everything set up and running on your living room TV without touching a line of code.
+              </p>
+
+              <ul class="mt-6 space-y-3 text-sm text-slateink/85 border-t border-stoneborder/70 pt-6">
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-sage mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Pre-configured compact local hub included</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-sage mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Custom property photo, local picks & house guide</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-sage mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Scannable Wi-Fi QR + browser phone remote</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-sage mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Hampton Roads install or nationwide shipped kit</span>
+                </li>
+              </ul>
+            </div>
+
+            <button type="button" onclick="openPilotModal('Single Property Install ($299)')" class="mt-8 w-full py-3.5 rounded-xl bg-linen border-2 border-slateink/15 hover:border-slateink text-slateink font-display font-bold text-sm transition-colors">
+              Book Single Install
+            </button>
+          </div>
+
+          <!-- Card 2 (HIGHLIGHTED): Owner-Funded Onboarding Add-On -->
+          <div class="bg-slateink text-linen rounded-3xl border-2 border-slateink shadow-tvframe p-7 flex flex-col justify-between relative overflow-hidden">
+            <!-- Handover Brass Top Accent Bar -->
+            <div class="absolute top-0 inset-x-0 h-1.5 bg-brass"></div>
+
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="font-mono text-xs uppercase tracking-wider text-brass font-medium">Partner Program</span>
+                <span class="px-2.5 py-1 rounded-full bg-brass text-slateink font-mono text-[10px] font-bold uppercase tracking-wider">Best for Property Managers</span>
+              </div>
+              <h3 class="font-display font-extrabold text-2xl text-white">Owner-Funded Onboarding Add-On</h3>
+              <div class="mt-4 flex items-baseline gap-2">
+                <span class="font-display font-extrabold text-4xl text-white">$0</span>
+                <span class="font-mono text-xs text-white/75">cost to PM · $299 billed to owner</span>
+              </div>
+              <p class="mt-3 text-sm text-white/75">
+                Offer HostScreen on your owner setup checklist right alongside smart locks—zero monthly overhead for your management company.
+              </p>
+
+              <ul class="mt-6 space-y-3 text-sm text-white/90 border-t border-white/15 pt-6">
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-brass mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span><strong>Free 1-unit pilot</strong> in a flagship home first</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-brass mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Zero monthly software fees across every property</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-brass mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Fewer Wi-Fi, door-code & check-out texts for admins</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-brass mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Remote health check so your maintenance tech stays free</span>
+                </li>
+              </ul>
+            </div>
+
+            <button type="button" onclick="openPilotModal('Owner-Funded Onboarding Add-On')" class="mt-8 w-full py-3.5 rounded-xl bg-brass text-slateink font-display font-extrabold text-sm hover:brightness-105 active:scale-[0.98] transition-all shadow-sm">
+              Claim Free 1-Unit Pilot
+            </button>
+          </div>
+
+          <!-- Card 3: Portfolio Rollout (5+ Units) -->
+          <div class="bg-white rounded-3xl border border-stoneborder shadow-editorial p-7 flex flex-col justify-between">
+            <div>
+              <div class="font-mono text-xs uppercase tracking-wider text-slateink/60 mb-2">Multi-Unit Scale</div>
+              <h3 class="font-display font-extrabold text-2xl text-slateink">Portfolio Rollout (5+ Units)</h3>
+              <div class="mt-4 flex items-baseline gap-2">
+                <span class="font-display font-extrabold text-4xl text-slateink">$199</span>
+                <span class="font-mono text-xs text-slateink/65">/ unit one-time · $0/mo software</span>
+              </div>
+              <p class="mt-3 text-sm text-slateink/70">
+                Upgrade an entire fleet of rentals in one clean batch with unified branding across every screen.
+              </p>
+
+              <ul class="mt-6 space-y-3 text-sm text-slateink/85 border-t border-stoneborder/70 pt-6">
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-sage mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Bulk pre-configured plug-and-play hardware hubs</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-sage mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Unified brand templates & local picks per market</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-sage mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Optional <strong>$19/mo HostScreen Care</strong> remote monitoring & seasonal updates</span>
+                </li>
+                <li class="flex items-start gap-2.5">
+                  <svg class="w-4 h-4 text-sage mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                  <span>Priority Hampton Roads on-site or nationwide rollout</span>
+                </li>
+              </ul>
+            </div>
+
+            <button type="button" onclick="openPilotModal('Portfolio Rollout (5+ Units)')" class="mt-8 w-full py-3.5 rounded-xl bg-slateink text-linen hover:bg-slateink/90 font-display font-bold text-sm transition-colors">
+              Request Portfolio Quote
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================================
+       10. FOOTER
+       ========================================================================= -->
+  <footer class="bg-slateink text-linen border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-8 border-b border-white/10">
+        <!-- Logo & Location -->
+        <div>
+          <div class="flex items-center gap-3">
+            <svg class="w-9 h-8 shrink-0" viewBox="0 0 48 42" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="2.5" y="2.5" width="43" height="31" rx="6.5" fill="#1E262C" stroke="#F6F3EC" stroke-width="3.2"/>
+              <path d="M18 33.5H30L32 39H16L18 33.5Z" fill="#F6F3EC"/>
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M24 9.5L13.5 18.2H16.8V28.5H31.2V18.2H34.5L24 9.5ZM24 18.2C22.45 18.2 21.2 19.45 21.2 21C21.2 22.05 21.78 22.96 22.64 23.43L21.7 28.5H26.3L25.36 23.43C26.22 22.96 26.8 22.05 26.8 21C26.8 19.45 25.55 18.2 24 18.2Z" fill="#4A7C6F"/>
+              <circle cx="38.5" cy="9.5" r="2.6" fill="#C88A4B"/>
+            </svg>
+            <span class="font-display font-extrabold text-lg tracking-tight text-white">HostScreen</span>
+          </div>
+          <p class="mt-2.5 text-sm text-white/65">
+            Hampton Roads, VA White-Glove Installs &amp; Nationwide Shipped Plug-and-Play Kits.
+          </p>
+        </div>
+
+        <!-- Quick Nav -->
+        <div class="flex flex-wrap items-center gap-6 text-sm text-white/75">
+          <a href="#demo" class="hover:text-white transition-colors">Live Demo</a>
+          <a href="#savings" class="hover:text-white transition-colors">Savings</a>
+          <a href="#tv-check" class="hover:text-white transition-colors">TV Check</a>
+          <a href="#pricing" class="hover:text-white transition-colors">Pricing</a>
+          <a href="#security" class="hover:text-white transition-colors">Security</a>
+          <button type="button" onclick="openPilotModal('Free 1-Unit Pilot')" class="text-brass font-display font-bold hover:underline">
+            Book Free Pilot →
+          </button>
+        </div>
+      </div>
+
+      <div class="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-white/50">
+        <span>© <span id="footerYear">2026</span> HostScreen. Done-for-you short-term rental TV installations.</span>
+        <span>Powered by open-source MIT software configured and supported locally by HostScreen.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       9. INTERACTIVE PILOT & QUOTE REQUEST MODAL (STATIC GITHUB PAGES READY)
+       ========================================================================= -->
+  <!--
+    GITHUB PAGES CONFIGURATION NOTE:
+    Before pushing index.html to GitHub Pages, scroll down to the `HOSTSCREEN_CONFIG` object
+    in the <script> tag and replace `hello@hostscreen.co` with your real business email address.
+    If you later want one-click backend form submissions without a server, you can also paste
+    a free Formspree endpoint URL (https://formspree.io) into `formspreeEndpoint`.
+  -->
+  <div id="pilotModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="pilotModalTitle" role="dialog" aria-modal="true">
+    <!-- Backdrop -->
+    <div onclick="closePilotModal()" class="fixed inset-0 bg-slateink/65 backdrop-blur-sm transition-opacity"></div>
+
+    <!-- Centered Dialog -->
+    <div class="flex min-h-full items-center justify-center p-4 sm:p-6">
+      <div class="relative w-full max-w-xl rounded-3xl bg-white border border-stoneborder shadow-2xl overflow-hidden">
+        <div class="h-1.5 bg-brass w-full"></div>
+
+        <div class="p-6 sm:p-8">
+          <div class="flex items-start justify-between gap-4 mb-5">
+            <div>
+              <span class="font-mono text-[11px] uppercase tracking-widest text-brass font-medium">HostScreen Inquiry</span>
+              <h3 id="pilotModalTitle" class="font-display font-extrabold text-2xl text-slateink mt-0.5">
+                Request Your Pilot or Setup Quote
+              </h3>
+              <p class="text-xs sm:text-sm text-slateink/65 mt-1">
+                Fill in a few quick details—send directly from your email app or copy a formatted summary to paste anywhere.
+              </p>
+            </div>
+            <button type="button" onclick="closePilotModal()" aria-label="Close modal" class="p-2 rounded-xl bg-linen hover:bg-stoneborder/60 text-slateink transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <!-- Inline Status / Validation Banner (Replaces alert()) -->
+          <div id="modalFeedback" class="hidden mb-4 px-4 py-3 rounded-xl text-xs font-medium"></div>
+
+          <form id="pilotForm" class="space-y-4" onsubmit="return false;">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="leadName" class="block text-xs font-display font-bold text-slateink mb-1.5">Your Name *</label>
+                <input id="leadName" type="text" required placeholder="e.g., Sara Norris" class="w-full px-3.5 py-2.5 rounded-xl bg-linen/60 border border-stoneborder text-sm text-slateink placeholder:text-slateink/40 focus:outline-none focus:border-slateink focus:bg-white transition-colors" />
+              </div>
+              <div>
+                <label for="leadCompany" class="block text-xs font-display font-bold text-slateink mb-1.5">Company / Property Name *</label>
+                <input id="leadCompany" type="text" required placeholder="e.g., Ocean View Stays" class="w-full px-3.5 py-2.5 rounded-xl bg-linen/60 border border-stoneborder text-sm text-slateink placeholder:text-slateink/40 focus:outline-none focus:border-slateink focus:bg-white transition-colors" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="leadEmail" class="block text-xs font-display font-bold text-slateink mb-1.5">Email Address *</label>
+                <input id="leadEmail" type="email" required placeholder="you@company.com" class="w-full px-3.5 py-2.5 rounded-xl bg-linen/60 border border-stoneborder text-sm text-slateink placeholder:text-slateink/40 focus:outline-none focus:border-slateink focus:bg-white transition-colors" />
+              </div>
+              <div>
+                <label for="leadUnits" class="block text-xs font-display font-bold text-slateink mb-1.5">Number of Listings</label>
+                <input id="leadUnits" type="number" min="1" value="1" class="w-full px-3.5 py-2.5 rounded-xl bg-linen/60 border border-stoneborder text-sm text-slateink focus:outline-none focus:border-slateink focus:bg-white transition-colors" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label for="leadTvBrand" class="block text-xs font-display font-bold text-slateink mb-1.5">Primary TV Brand</label>
+                <select id="leadTvBrand" class="w-full px-3.5 py-2.5 rounded-xl bg-linen/60 border border-stoneborder text-sm text-slateink focus:outline-none focus:border-slateink focus:bg-white transition-colors">
+                  <option value="Google TV / Android TV">Google TV / Android TV</option>
+                  <option value="Samsung">Samsung</option>
+                  <option value="LG">LG</option>
+                  <option value="Roku">Roku</option>
+                  <option value="Fire TV">Fire TV</option>
+                  <option value="Apple TV">Apple TV</option>
+                  <option value="Hisense / Philips">Hisense / Philips</option>
+                  <option value="VIZIO / Older TV / Mixed">VIZIO / Older TV / Mixed</option>
+                </select>
+              </div>
+              <div>
+                <label for="leadPreference" class="block text-xs font-display font-bold text-slateink mb-1.5">Rollout Preference</label>
+                <select id="leadPreference" class="w-full px-3.5 py-2.5 rounded-xl bg-linen/60 border border-stoneborder text-sm text-slateink focus:outline-none focus:border-slateink focus:bg-white transition-colors">
+                  <option value="Free 1-Unit Pilot">Free 1-Unit Pilot</option>
+                  <option value="Owner-Funded Onboarding Add-On">Owner-Funded Onboarding Add-On</option>
+                  <option value="Single Property Install ($299)">Single Property Install ($299)</option>
+                  <option value="Portfolio Rollout (5+ Units)">Portfolio Rollout (5+ Units)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label for="leadNotes" class="block text-xs font-display font-bold text-slateink mb-1.5">Notes (Location, Booking Platform, Smart Home)</label>
+              <textarea id="leadNotes" rows="3" placeholder="e.g., Virginia Beach properties on Airbnb + Hospitable, interested in testing 1 oceanfront unit first..." class="w-full px-3.5 py-2.5 rounded-xl bg-linen/60 border border-stoneborder text-sm text-slateink placeholder:text-slateink/40 focus:outline-none focus:border-slateink focus:bg-white transition-colors"></textarea>
+            </div>
+
+            <!-- Static GitHub Pages Actions -->
+            <div class="pt-2 flex flex-col sm:flex-row gap-3">
+              <button type="button" onclick="handleOpenEmail()" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slateink text-linen font-display font-bold text-sm hover:bg-slateink/90 active:scale-[0.98] transition-all shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span>Open Pre-Filled Email</span>
+              </button>
+              <button type="button" id="copySummaryBtn" onclick="handleCopySummary()" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linen border-2 border-stoneborder hover:border-slateink text-slateink font-display font-bold text-sm active:scale-[0.98] transition-all">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span id="copySummaryBtnText">Copy Inquiry Summary</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       APPLICATION JAVASCRIPT (100% VANILLA JS, ZERO EXTERNAL DEPENDENCIES)
+       ========================================================================= -->
+  <script>
+    /* =========================================================================
+       HOSTSCREEN SITE CONFIGURATION (EDIT BEFORE PUSHING TO GITHUB PAGES)
+       Replace `contactEmail` with your own email address.
+       Optional: add a free Formspree URL (e.g. 'https://formspree.io/f/xxxx')
+       ========================================================================= */
+    const HOSTSCREEN_CONFIG = {
+      contactEmail: 'hello@hostscreen.co',
+      formspreeEndpoint: '' // Optional: paste Formspree URL if desired
+    };
+
+    /* =========================================================================
+       GLOBAL INTERACTIVE STATE
+       ========================================================================= */
+    const appState = {
+      phase: 'arrival', // 'arrival' | 'during' | 'checkout' | 'between'
+      filmMode: false,
+      acTemp: 70,
+      lightsOn: true,
+      poolHeaterOn: false,
+      tvVolume: 45,
+      focusedCardIndex: -1,
+      activeTvModalKey: null,
+      activePhoneTab: 'ask',
+      currentTvCardKeys: []
+    };
+
+    let volumeHudTimer = null;
+    let tvToastTimer = null;
+
+    /* Clean Generated Inline SVG QR Pattern (No external images / No base64) */
+    const QR_SVG_MARKUP = `
+      <svg class="w-full h-full" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+        <rect width="29" height="29" rx="2" fill="#FFFFFF"/>
+        <path fill="#1E262C" d="M2 2h7v7H2V2zm1 1v5h5V3H3zm1 1h3v3H4V4zm16-2h7v7h-7V2zm1 1v5h5V3h-5zm1 1h3v3h-3V4zM2 20h7v7H2v-7zm1 1v5h5v-5H3zm1 1h3v3H4v-3zm7-19h2v2h-2V3zm3 0h2v1h-2V3zm3 0h2v2h-2V3zm-6 3h1v2h-1V6zm2 1h3v1h-3V7zm4-1h1v3h-1V6zm-6 4h2v2h-2v-2zm3 1h2v2h-2v-2zm3-1h2v1h-2v-1zM2 11h2v2H2v-2zm3 1h3v1H5v-1zm4-1h2v3H9v-3zm4 2h2v2h-2v-2zm3-1h3v2h-3v-2zm4 0h2v3h-2v-3zm3 1h2v2h-2v-2zm2-2h2v2h-2v-2zM2 15h3v2H2v-2zm4 1h2v2H6v-2zm4-1h2v2h-2v-2zm3 1h3v2h-3v-2zm4-1h2v3h-2v-3zm3 2h2v2h-2v-2zm3-1h4v2h-4v-2zM11 20h2v2h-2v-2zm3 1h2v2h-2v-2zm3-1h3v2h-3v-2zm4 0h2v3h-2v-3zm3 1h3v2h-3v-2zm-13 3h3v3h-3v-3zm4 1h2v2h-2v-2zm3-1h2v3h-2v-3zm3 1h3v2h-3v-2zm4-1h2v3h-2v-3z"/>
+      </svg>
+    `;
+
+    /* Helper: Get live credentials (respects Film Mode) */
+    function getLiveCredentials() {
+      if (appState.filmMode) {
+        return {
+          wifiName: 'OceanView_Guest',
+          wifiPass: 'DEMO-WIFI-2026',
+          frontDoor: '0000#',
+          poolGate: '0000#'
+        };
+      }
+      return {
+        wifiName: 'OceanView_Guest',
+        wifiPass: 'CoastalBreeze2026',
+        frontDoor: '4821#',
+        poolGate: '1904#'
+      };
+    }
+
+    /* =========================================================================
+       CLIPBOARD HELPER (Uses execCommand('copy') for reliable iFrame support)
+       ========================================================================= */
+    function copyTextSafely(text) {
+      try {
+        const tempInput = document.createElement('textarea');
+        tempInput.value = text;
+        tempInput.setAttribute('readonly', '');
+        tempInput.style.position = 'fixed';
+        tempInput.style.left = '-9999px';
+        tempInput.style.top = '0';
+        document.body.appendChild(tempInput);
+        tempInput.focus();
+        tempInput.select();
+        const success = document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        return success;
+      } catch (err) {
+        console.error('Copy failed:', err);
+        return false;
+      }
+    }
+
+    /* =========================================================================
+       TV SCREEN RENDERER
+       ========================================================================= */
+    function renderTvScreen() {
+      const creds = getLiveCredentials();
+      const greetingEl = document.getElementById('tvGreeting');
+      const subtitleEl = document.getElementById('tvSubtitle');
+      const clockEl = document.getElementById('tvClock');
+      const dateEl = document.getElementById('tvDate');
+      const phoneClockEl = document.getElementById('phoneClock');
+      const container = document.getElementById('tvCardsContainer');
+      const appsRow = document.getElementById('tvAppsRow');
+      const filmPill = document.getElementById('tvFilmPill');
+      const phoneStayStatus = document.getElementById('phoneStayStatus');
+
+      // Film Mode visual indicators
+      if (appState.filmMode) {
+        filmPill.classList.remove('hidden');
+      } else {
+        filmPill.classList.add('hidden');
+      }
+
+      // Ambient Glow & Light Badge
+      const ambientGlow = document.getElementById('tvAmbientGlow');
+      const tvLightBadge = document.getElementById('tvLightBadge');
+      ambientGlow.style.opacity = appState.lightsOn ? '1' : '0.12';
+      tvLightBadge.textContent = appState.lightsOn ? 'Room Lights: ON' : 'Room Lights: DIMMED';
+      tvLightBadge.className = appState.lightsOn
+        ? 'font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-brass/20 text-slateink border border-brass/40 transition-all'
+        : 'font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-slateink/10 text-slateink/70 border border-stoneborder transition-all';
+
+      const poolTempVal = appState.poolHeaterOn ? '85°F' : '81°F';
+      const lightTextVal = appState.lightsOn ? 'ON' : 'OFF';
+
+      // Reset card focus list
+      appState.currentTvCardKeys = [];
+
+      if (appState.phase === 'arrival') {
+        greetingEl.textContent = 'Welcome, Alex';
+        subtitleEl.textContent = 'Check-in from 3:00 PM today · 3 nights';
+        clockEl.textContent = '3:14 PM';
+        phoneClockEl.textContent = '3:14';
+        dateEl.textContent = 'FRI · OCEAN VIEW, VA';
+        phoneStayStatus.textContent = 'Check-in from 3:00 PM today';
+        appsRow.classList.remove('hidden');
+
+        appState.currentTvCardKeys = ['weather', 'wifi', 'doors', 'picks', 'guide'];
+
+        container.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 sm:gap-3">
+            <!-- 3-Day Weather Card -->
+            <button type="button" data-card-key="weather" onclick="openTvModal('weather')" class="tv-card-item sm:col-span-5 text-left tv-glass tv-glass-hover rounded-2xl p-3 sm:p-3.5 transition-all">
+              <div class="font-mono text-[10px] uppercase tracking-wider text-brass mb-2">3-Day Coastal Forecast</div>
+              <div class="grid grid-cols-3 gap-1.5 text-center">
+                <div class="rounded-xl bg-white/8 py-1.5 px-1">
+                  <div class="font-mono text-[10px] text-white/65">FRI</div>
+                  <div class="font-display font-bold text-base text-white">74°</div>
+                  <div class="text-[10px] text-white/75">Sunny</div>
+                </div>
+                <div class="rounded-xl bg-white/8 py-1.5 px-1">
+                  <div class="font-mono text-[10px] text-white/65">SAT</div>
+                  <div class="font-display font-bold text-base text-white">72°</div>
+                  <div class="text-[10px] text-white/75">Breeze</div>
+                </div>
+                <div class="rounded-xl bg-white/8 py-1.5 px-1">
+                  <div class="font-mono text-[10px] text-white/65">SUN</div>
+                  <div class="font-display font-bold text-base text-white">76°</div>
+                  <div class="text-[10px] text-white/75">Clear</div>
+                </div>
+              </div>
+            </button>
+
+            <!-- Wi-Fi QR Card -->
+            <button type="button" data-card-key="wifi" onclick="openTvModal('wifi')" class="tv-card-item sm:col-span-4 text-left tv-glass tv-glass-hover rounded-2xl p-3 sm:p-3.5 flex items-center justify-between gap-2.5 transition-all">
+              <div class="min-w-0">
+                <div class="font-mono text-[10px] uppercase tracking-wider text-sage font-medium">Scan for Wi-Fi</div>
+                <div class="font-display font-bold text-sm text-white truncate mt-0.5">${creds.wifiName}</div>
+                <div class="font-mono text-[11px] text-white/75 truncate mt-0.5">${creds.wifiPass}</div>
+                <div class="text-[10px] text-brass mt-1.5">Tap to enlarge QR →</div>
+              </div>
+              <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-white p-1 shrink-0 shadow">
+                ${QR_SVG_MARKUP}
+              </div>
+            </button>
+
+            <!-- Stay-Only Door Code Card -->
+            <button type="button" data-card-key="doors" onclick="openTvModal('doors')" class="tv-card-item sm:col-span-3 text-left tv-glass tv-glass-hover rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between transition-all">
+              <div class="font-mono text-[10px] uppercase tracking-wider text-brass">Stay-Only Entry</div>
+              <div class="my-1.5">
+                <div class="text-[10px] text-white/65">Front Door</div>
+                <div class="font-mono font-bold text-lg text-white">${creds.frontDoor}</div>
+              </div>
+              <div class="text-[10px] text-sage font-medium">Active until Sun 10 AM</div>
+            </button>
+
+            <!-- Local Picks Card -->
+            <button type="button" data-card-key="picks" onclick="openTvModal('picks')" class="tv-card-item sm:col-span-7 text-left tv-glass tv-glass-hover rounded-2xl p-3 flex items-center justify-between gap-3 transition-all">
+              <div>
+                <div class="font-mono text-[10px] uppercase tracking-wider text-brass">Local Picks · Hampton Roads</div>
+                <div class="font-display font-bold text-xs sm:text-sm text-white mt-0.5">Bay Local Eatery · The Porch · Waterman’s</div>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-white/10 font-mono text-[10px] text-white shrink-0">View Guide</span>
+            </button>
+
+            <!-- House Guide Card -->
+            <button type="button" data-card-key="guide" onclick="openTvModal('guide')" class="tv-card-item sm:col-span-5 text-left tv-glass tv-glass-hover rounded-2xl p-3 flex items-center justify-between gap-2 transition-all">
+              <div>
+                <div class="font-mono text-[10px] uppercase tracking-wider text-white/60">House Essentials</div>
+                <div class="font-display font-bold text-xs sm:text-sm text-white mt-0.5">Beach Gear, AC &amp; Parking</div>
+              </div>
+              <span class="text-brass text-sm">→</span>
+            </button>
+          </div>
+        `;
+      } else if (appState.phase === 'during') {
+        greetingEl.textContent = 'Good evening, Alex';
+        subtitleEl.textContent = 'Night 2 of 4 · Checkout Sunday 10 AM';
+        clockEl.textContent = '7:42 PM';
+        phoneClockEl.textContent = '7:42';
+        dateEl.textContent = 'SAT · OCEAN VIEW, VA';
+        phoneStayStatus.textContent = 'Night 2 of 4 · Checkout Sunday 10 AM';
+        appsRow.classList.remove('hidden');
+
+        appState.currentTvCardKeys = ['smarthome', 'doors', 'wifi', 'picks'];
+
+        container.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 sm:gap-3">
+            <!-- Live Synced Smart Home Card -->
+            <button type="button" data-card-key="smarthome" onclick="openTvModal('guide')" class="tv-card-item sm:col-span-6 text-left tv-glass tv-glass-hover rounded-2xl p-3.5 transition-all">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-sage font-medium">Smart Home · Live Synced</span>
+                <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
+              </div>
+              <div class="grid grid-cols-3 gap-2">
+                <div class="rounded-xl bg-white/10 p-2">
+                  <div class="text-[10px] text-white/65">Living AC</div>
+                  <div class="font-display font-extrabold text-lg text-white">${appState.acTemp}°F</div>
+                </div>
+                <div class="rounded-xl bg-white/10 p-2">
+                  <div class="text-[10px] text-white/65">Lights</div>
+                  <div class="font-display font-extrabold text-lg ${appState.lightsOn ? 'text-brass' : 'text-white/55'}">${lightTextVal}</div>
+                </div>
+                <div class="rounded-xl bg-white/10 p-2">
+                  <div class="text-[10px] text-white/65">Pool</div>
+                  <div class="font-display font-extrabold text-lg text-white">${poolTempVal}</div>
+                </div>
+              </div>
+            </button>
+
+            <!-- Door Codes Card -->
+            <button type="button" data-card-key="doors" onclick="openTvModal('doors')" class="tv-card-item sm:col-span-6 text-left tv-glass tv-glass-hover rounded-2xl p-3.5 transition-all">
+              <div class="font-mono text-[10px] uppercase tracking-wider text-brass mb-2">Active Stay Door Codes</div>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="rounded-xl bg-white/10 p-2">
+                  <div class="text-[10px] text-white/65">Front Door</div>
+                  <div class="font-mono font-bold text-base text-white">${creds.frontDoor}</div>
+                </div>
+                <div class="rounded-xl bg-white/10 p-2">
+                  <div class="text-[10px] text-white/65">Pool Gate</div>
+                  <div class="font-mono font-bold text-base text-white">${creds.poolGate}</div>
+                </div>
+              </div>
+            </button>
+
+            <!-- Wi-Fi QR -->
+            <button type="button" data-card-key="wifi" onclick="openTvModal('wifi')" class="tv-card-item sm:col-span-5 text-left tv-glass tv-glass-hover rounded-2xl p-3 flex items-center justify-between gap-2 transition-all">
+              <div class="min-w-0">
+                <div class="font-mono text-[10px] uppercase tracking-wider text-sage">Guest Wi-Fi</div>
+                <div class="font-display font-bold text-xs text-white truncate">${creds.wifiName}</div>
+                <div class="font-mono text-[11px] text-white/75 truncate">${creds.wifiPass}</div>
+              </div>
+              <div class="w-12 h-12 rounded-lg bg-white p-1 shrink-0">${QR_SVG_MARKUP}</div>
+            </button>
+
+            <!-- Local Dining Picks -->
+            <button type="button" data-card-key="picks" onclick="openTvModal('picks')" class="tv-card-item sm:col-span-7 text-left tv-glass tv-glass-hover rounded-2xl p-3 flex items-center justify-between gap-2 transition-all">
+              <div>
+                <div class="font-mono text-[10px] uppercase tracking-wider text-brass">Tonight’s Local Dining</div>
+                <div class="font-display font-bold text-xs sm:text-sm text-white mt-0.5">The Porch on Long Creek · Sunset Patio</div>
+                <div class="text-[10px] text-white/65">Tap to see all 3 host favorites</div>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-white/10 font-mono text-[10px] text-white shrink-0">Open</span>
+            </button>
+          </div>
+        `;
+      } else if (appState.phase === 'checkout') {
+        greetingEl.textContent = 'Good morning, Alex';
+        subtitleEl.textContent = 'Check-out today at 10:00 AM · Safe travels!';
+        clockEl.textContent = '8:30 AM';
+        phoneClockEl.textContent = '8:30';
+        dateEl.textContent = 'SUN · OCEAN VIEW, VA';
+        phoneStayStatus.textContent = 'Check-out today at 10:00 AM';
+        appsRow.classList.remove('hidden');
+
+        appState.currentTvCardKeys = ['checkout', 'weather', 'wifi'];
+
+        container.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 sm:gap-3">
+            <!-- Prominent Check-Out Steps Card -->
+            <button type="button" data-card-key="checkout" onclick="openTvModal('checkout')" class="tv-card-item sm:col-span-7 text-left tv-glass tv-glass-hover rounded-2xl p-3.5 sm:p-4 border-brass/50 transition-all">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-mono text-[10px] uppercase tracking-wider text-brass font-medium">10:00 AM Check-Out Checklist</span>
+                <span class="text-[10px] font-mono text-white/65">Tap for details</span>
+              </div>
+              <ol class="space-y-1.5 text-xs sm:text-[13px] text-white/90">
+                <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-sage text-[10px] font-mono flex items-center justify-center shrink-0">1</span>Set living room AC to 74°</li>
+                <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-sage text-[10px] font-mono flex items-center justify-center shrink-0">2</span>Start the dishwasher before heading out</li>
+                <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-sage text-[10px] font-mono flex items-center justify-center shrink-0">3</span>Leave beach passes &amp; keys on entry table</li>
+                <li class="flex items-center gap-2"><span class="w-4 h-4 rounded-full bg-sage text-[10px] font-mono flex items-center justify-center shrink-0">4</span>Lock front door — safe travels!</li>
+              </ol>
+            </button>
+
+            <!-- Weather + Wi-Fi Column -->
+            <div class="sm:col-span-5 flex flex-col gap-2.5">
+              <button type="button" data-card-key="weather" onclick="openTvModal('weather')" class="tv-card-item text-left tv-glass tv-glass-hover rounded-2xl p-3 transition-all">
+                <div class="font-mono text-[10px] uppercase tracking-wider text-white/65">Today’s Weather</div>
+                <div class="flex items-baseline justify-between mt-1">
+                  <span class="font-display font-bold text-xl text-white">76° Clear</span>
+                  <span class="text-xs text-white/70">Great drive weather</span>
+                </div>
+              </button>
+
+              <button type="button" data-card-key="wifi" onclick="openTvModal('wifi')" class="tv-card-item text-left tv-glass tv-glass-hover rounded-2xl p-3 flex items-center justify-between gap-2 transition-all">
+                <div class="min-w-0">
+                  <div class="font-mono text-[10px] uppercase tracking-wider text-sage">Guest Wi-Fi</div>
+                  <div class="font-display font-bold text-xs text-white truncate">${creds.wifiName}</div>
+                  <div class="font-mono text-[11px] text-white/75 truncate">${creds.wifiPass}</div>
+                </div>
+                <div class="w-11 h-11 rounded-lg bg-white p-1 shrink-0">${QR_SVG_MARKUP}</div>
+              </button>
+            </div>
+          </div>
+        `;
+      } else {
+        // BETWEEN GUESTS (Privacy Active)
+        greetingEl.textContent = 'Welcome to Ocean View Cottage';
+        subtitleEl.textContent = 'Ready for next arrival';
+        clockEl.textContent = '12:15 PM';
+        phoneClockEl.textContent = '12:15';
+        dateEl.textContent = 'TURNOVER MODE · CLEAN';
+        appsRow.classList.add('hidden');
+
+        appState.currentTvCardKeys = [];
+
+        container.innerHTML = `
+          <div class="my-4 sm:my-6 max-w-lg mx-auto tv-glass rounded-2xl p-5 sm:p-6 text-center border-sage/50">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sage text-white font-mono text-[11px] font-medium mb-3 shadow-sm">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              <span>Privacy Active</span>
+            </div>
+            <h4 class="font-display font-bold text-base sm:text-lg text-white">
+              Guest names, dates, and door codes automatically cleared.
+            </h4>
+            <p class="text-xs text-white/70 mt-2 leading-relaxed">
+              Between bookings, HostScreen displays a calm property welcome screen only. Previous guest phone remote links are revoked automatically at check-out.
+            </p>
+          </div>
+        `;
+      }
+
+      // Apply focus ring if D-pad is actively highlighting a card
+      applyTvCardFocus();
+
+      // Update Phone Remote displays to stay 100% synced
+      syncPhoneRemoteDisplays();
+
+      // If an in-TV detail modal is currently open, refresh its contents (e.g., Film Mode toggled live)
+      if (appState.activeTvModalKey) {
+        openTvModal(appState.activeTvModalKey);
+      }
+    }
+
+    function syncPhoneRemoteDisplays() {
+      const creds = getLiveCredentials();
+      const expiredView = document.getElementById('phoneExpiredView');
+      const activeView = document.getElementById('phoneActiveView');
+
+      if (appState.phase === 'between') {
+        expiredView.classList.remove('hidden');
+        activeView.classList.add('hidden');
+      } else {
+        expiredView.classList.add('hidden');
+        activeView.classList.remove('hidden');
+      }
+
+      document.getElementById('phoneWifiCreds').textContent = `${creds.wifiName} · ${creds.wifiPass}`;
+      document.getElementById('phoneDoorCode').textContent = creds.frontDoor;
+      document.getElementById('phoneAcValue').textContent = `${appState.acTemp}°F`;
+
+      // Lights controls
+      const lightsSub = document.getElementById('phoneLightsSub');
+      const lightsBtn = document.getElementById('toggleLightsBtn');
+      if (appState.lightsOn) {
+        lightsSub.textContent = 'Warm Evening · ON';
+        lightsSub.className = 'text-[11px] text-sage font-medium mt-0.5';
+        lightsBtn.textContent = 'Turn Off';
+        lightsBtn.className = 'px-3.5 py-2 rounded-xl bg-brass text-white font-display font-bold text-xs hover:opacity-90 active:scale-95 transition-all';
+      } else {
+        lightsSub.textContent = 'Dimmed / Off';
+        lightsSub.className = 'text-[11px] text-slateink/60 mt-0.5';
+        lightsBtn.textContent = 'Turn On';
+        lightsBtn.className = 'px-3.5 py-2 rounded-xl bg-slateink text-linen font-display font-bold text-xs hover:bg-slateink/90 active:scale-95 transition-all';
+      }
+
+      // Pool controls
+      const poolSub = document.getElementById('phonePoolSub');
+      const poolBtn = document.getElementById('togglePoolBtn');
+      if (appState.poolHeaterOn) {
+        poolSub.textContent = 'Heating Active · Target 85°F';
+        poolSub.className = 'text-[11px] text-sage font-medium mt-0.5';
+        poolBtn.textContent = 'Standby';
+        poolBtn.className = 'px-3.5 py-2 rounded-xl bg-sage text-white font-display font-bold text-xs hover:opacity-90 active:scale-95 transition-all';
+      } else {
+        poolSub.textContent = 'Current Temp: 81°F · Standby';
+        poolSub.className = 'text-[11px] text-slateink/65 mt-0.5';
+        poolBtn.textContent = 'Heat to 85°';
+        poolBtn.className = 'px-3.5 py-2 rounded-xl bg-slateink text-linen font-display font-bold text-xs hover:bg-slateink/90 active:scale-95 transition-all';
+      }
+    }
+
+    /* =========================================================================
+       PHASE SWITCHER & FILM MODE
+       ========================================================================= */
+    function setPhase(newPhase) {
+      appState.phase = newPhase;
+      appState.focusedCardIndex = -1;
+      closeTvModal();
+
+      // Update phase button styles
+      document.querySelectorAll('.phase-btn').forEach(btn => {
+        if (btn.dataset.phase === newPhase) {
+          btn.className = 'phase-btn flex-1 min-w-[140px] px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm transition-all bg-slateink text-linen shadow-sm';
+        } else {
+          btn.className = 'phase-btn flex-1 min-w-[140px] px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm transition-all text-slateink/75 hover:text-slateink hover:bg-white/70';
+        }
+      });
+
+      renderTvScreen();
+    }
+
+    document.querySelectorAll('.phase-btn').forEach(btn => {
+      btn.addEventListener('click', () => setPhase(btn.dataset.phase));
+    });
+
+    // Film Mode Toggle
+    const filmModeToggle = document.getElementById('filmModeToggle');
+    filmModeToggle.addEventListener('click', () => {
+      appState.filmMode = !appState.filmMode;
+      filmModeToggle.setAttribute('aria-checked', String(appState.filmMode));
+      const dot = document.getElementById('filmModeDot');
+      const banner = document.getElementById('filmModeBanner');
+
+      if (appState.filmMode) {
+        filmModeToggle.classList.remove('bg-stoneborder');
+        filmModeToggle.classList.add('bg-sage');
+        dot.classList.remove('translate-x-0');
+        dot.classList.add('translate-x-5');
+        banner.classList.remove('hidden');
+        showTvToast('Film Mode enabled — Wi-Fi & door codes masked for camera.');
+      } else {
+        filmModeToggle.classList.remove('bg-sage');
+        filmModeToggle.classList.add('bg-stoneborder');
+        dot.classList.remove('translate-x-5');
+        dot.classList.add('translate-x-0');
+        banner.classList.add('hidden');
+        showTvToast('Film Mode off — live stay credentials restored.');
+      }
+      renderTvScreen();
+    });
+
+    /* =========================================================================
+       IN-TV DETAIL MODAL SHEETS & TOASTS
+       ========================================================================= */
+    function openTvModal(key) {
+      const creds = getLiveCredentials();
+      appState.activeTvModalKey = key;
+      const modal = document.getElementById('tvDetailModal');
+      const eyebrow = document.getElementById('tvModalEyebrow');
+      const title = document.getElementById('tvModalTitle');
+      const body = document.getElementById('tvModalBody');
+
+      if (key === 'wifi') {
+        eyebrow.textContent = 'Instant Wi-Fi Access';
+        title.textContent = 'Scan to Join Guest Wi-Fi';
+        body.innerHTML = `
+          <div class="flex flex-col sm:flex-row items-center gap-5">
+            <div class="w-28 h-28 rounded-2xl bg-white p-2 shrink-0 shadow-lg">${QR_SVG_MARKUP}</div>
+            <div class="space-y-2 text-center sm:text-left">
+              <div><span class="font-mono text-xs text-white/60 block">NETWORK NAME</span><strong class="font-display text-lg text-white">${creds.wifiName}</strong></div>
+              <div><span class="font-mono text-xs text-white/60 block">PASSWORD</span><strong class="font-mono text-base text-brass">${creds.wifiPass}</strong></div>
+              <p class="text-xs text-white/70">Point any iPhone or Android camera at the code to join automatically—and open your browser remote.</p>
+            </div>
+          </div>
+        `;
+      } else if (key === 'doors') {
+        eyebrow.textContent = 'Stay-Only Security';
+        title.textContent = 'Active Entry & Gate Codes';
+        body.innerHTML = `
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div class="p-3.5 rounded-xl bg-white/10 border border-white/15">
+              <div class="font-mono text-[10px] uppercase text-white/60">Front Entry Keypad</div>
+              <div class="font-mono font-bold text-2xl text-white mt-1">${creds.frontDoor}</div>
+              <div class="text-[11px] text-sage mt-1">Press # after digits to unlock</div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-white/10 border border-white/15">
+              <div class="font-mono text-[10px] uppercase text-white/60">Pool &amp; Side Gate</div>
+              <div class="font-mono font-bold text-2xl text-white mt-1">${creds.poolGate}</div>
+              <div class="text-[11px] text-white/70 mt-1">Latch closes automatically</div>
+            </div>
+          </div>
+          <p class="text-xs text-white/65">These codes only appear on screen during Alex’s confirmed stay and clear automatically at 10:00 AM check-out.</p>
+        `;
+      } else if (key === 'picks') {
+        eyebrow.textContent = 'Curated Local Guide';
+        title.textContent = 'Favorite Hampton Roads Spots';
+        body.innerHTML = `
+          <div class="space-y-2.5">
+            <div class="p-3 rounded-xl bg-white/10 flex items-center justify-between gap-2">
+              <div><strong class="text-white">Bay Local Eatery</strong><div class="text-xs text-white/70">6 min drive · Soft-shell crab benedict &amp; fresh coastal brunch</div></div>
+              <span class="font-mono text-xs text-brass shrink-0">★ 4.7</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white/10 flex items-center justify-between gap-2">
+              <div><strong class="text-white">The Porch on Long Creek</strong><div class="text-xs text-white/70">11 min drive · Waterfront deck &amp; sunset oysters</div></div>
+              <span class="font-mono text-xs text-brass shrink-0">★ 4.8</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white/10 flex items-center justify-between gap-2">
+              <div><strong class="text-white">Waterman’s Surfside Grille</strong><div class="text-xs text-white/70">15 min drive · Oceanfront classic &amp; famous orange crushes</div></div>
+              <span class="font-mono text-xs text-brass shrink-0">★ 4.6</span>
+            </div>
+          </div>
+        `;
+      } else if (key === 'checkout') {
+        eyebrow.textContent = 'Departure Morning';
+        title.textContent = '10:00 AM Check-Out Steps';
+        body.innerHTML = `
+          <ol class="space-y-2.5 text-sm">
+            <li class="p-2.5 rounded-xl bg-white/10 flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-sage font-mono text-xs flex items-center justify-center shrink-0">1</span>Set the living room thermostat to 74°F.</li>
+            <li class="p-2.5 rounded-xl bg-white/10 flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-sage font-mono text-xs flex items-center justify-center shrink-0">2</span>Load any remaining mugs/plates and start the dishwasher.</li>
+            <li class="p-2.5 rounded-xl bg-white/10 flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-sage font-mono text-xs flex items-center justify-center shrink-0">3</span>Leave beach passes and spare keys on the front entry table.</li>
+            <li class="p-2.5 rounded-xl bg-white/10 flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-sage font-mono text-xs flex items-center justify-center shrink-0">4</span>Press the lock icon on the front keypad. Thank you for staying!</li>
+          </ol>
+        `;
+      } else if (key === 'weather') {
+        eyebrow.textContent = 'Local Forecast';
+        title.textContent = '3-Day Ocean View Weather';
+        body.innerHTML = `
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="p-3 rounded-xl bg-white/10"><div class="font-mono text-xs text-brass">FRIDAY</div><div class="font-display font-bold text-2xl text-white my-1">74°</div><div class="text-xs text-white/75">Sunny · Light SE wind</div></div>
+            <div class="p-3 rounded-xl bg-white/10"><div class="font-mono text-xs text-brass">SATURDAY</div><div class="font-display font-bold text-2xl text-white my-1">72°</div><div class="text-xs text-white/75">Coastal Breeze · 10% rain</div></div>
+            <div class="p-3 rounded-xl bg-white/10"><div class="font-mono text-xs text-brass">SUNDAY</div><div class="font-display font-bold text-2xl text-white my-1">76°</div><div class="text-xs text-white/75">Clear Skies · Low 64°</div></div>
+          </div>
+        `;
+      } else {
+        eyebrow.textContent = 'House Guide & Smart Controls';
+        title.textContent = 'Ocean View Cottage Essentials';
+        body.innerHTML = `
+          <div class="space-y-2.5 text-xs sm:text-sm">
+            <div class="p-3 rounded-xl bg-white/10"><strong class="text-brass">Beach Gear:</strong> Chairs, umbrella, and 6 beach towels are stocked in the side-yard cedar shed.</div>
+            <div class="p-3 rounded-xl bg-white/10"><strong class="text-brass">Climate &amp; Lights:</strong> Living Room AC is currently <strong>${appState.acTemp}°F</strong> and Lights are <strong>${appState.lightsOn ? 'ON' : 'DIMMED'}</strong>. Adjust anytime from your phone’s Rooms tab.</div>
+            <div class="p-3 rounded-xl bg-white/10"><strong class="text-brass">Parking:</strong> Up to 3 vehicles fit in the private driveway; street permits are not required.</div>
+          </div>
+        `;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeTvModal() {
+      appState.activeTvModalKey = null;
+      document.getElementById('tvDetailModal').classList.add('hidden');
+    }
+
+    function showTvToast(message) {
+      const toast = document.getElementById('tvToast');
+      const toastText = document.getElementById('tvToastText');
+      toastText.textContent = message;
+      toast.classList.remove('opacity-0', 'translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(tvToastTimer);
+      tvToastTimer = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-2');
+      }, 2800);
+    }
+
+    function launchStreamingApp(appName) {
+      showTvToast(`Opening ${appName} · Auto-selecting 'Guest' profile — host watch history protected.`);
+    }
+
+    /* =========================================================================
+       PHONE REMOTE TABS & INTERACTIONS
+       ========================================================================= */
+    document.querySelectorAll('.phone-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.phoneTab;
+        appState.activePhoneTab = target;
+
+        document.querySelectorAll('.phone-tab-btn').forEach(b => {
+          if (b.dataset.phoneTab === target) {
+            b.className = 'phone-tab-btn py-2 rounded-lg font-display font-bold text-[11px] bg-slateink text-linen transition-colors';
+          } else {
+            b.className = 'phone-tab-btn py-2 rounded-lg font-display font-bold text-[11px] text-slateink/70 hover:bg-linen transition-colors';
+          }
+        });
+
+        document.querySelectorAll('.phone-tab-panel').forEach(panel => {
+          panel.classList.add('hidden');
+        });
+        document.getElementById(`phoneTab-${target}`).classList.remove('hidden');
+      });
+    });
+
+    function copyWifiPassword() {
+      const creds = getLiveCredentials();
+      const btn = document.getElementById('copyWifiBtn');
+      copyTextSafely(creds.wifiPass);
+      btn.textContent = 'Copied!';
+      btn.classList.remove('bg-slateink');
+      btn.classList.add('bg-sage');
+      setTimeout(() => {
+        btn.textContent = 'Copy Wi-Fi';
+        btn.classList.remove('bg-sage');
+        btn.classList.add('bg-slateink');
+      }, 1800);
+    }
+
+    function askHelper(topic) {
+      const replyEl = document.getElementById('helperReplyText');
+      if (topic === 'dinner') {
+        replyEl.textContent = 'From the house guide: The Porch on Long Creek (11 min, waterfront sunset patio) and Waterman’s Surfside Grille (15 min, fresh seafood) are top picks. See the Dining tab to reserve.';
+      } else if (topic === 'rain') {
+        replyEl.textContent = 'Tomorrow (Saturday) is forecast for 72°F with a light coastal breeze and only a 10% chance of rain—ideal morning for the beach.';
+      } else if (topic === 'lights') {
+        appState.lightsOn = false;
+        renderTvScreen();
+        showTvToast('Living Room Lights dimmed via Guest Helper.');
+        replyEl.textContent = 'Done — Living Room Lights have been dimmed (synced live on your TV screen). You can toggle them back anytime in the Rooms tab.';
+      }
+    }
+
+    // TV Pad D-Pad Navigation & Volume
+    function applyTvCardFocus() {
+      const cards = document.querySelectorAll('.tv-card-item');
+      cards.forEach((card, idx) => {
+        if (idx === appState.focusedCardIndex) {
+          card.classList.add('tv-card-focused');
+        } else {
+          card.classList.remove('tv-card-focused');
+        }
+      });
+    }
+
+    function tvPadNavigate(direction) {
+      if (appState.currentTvCardKeys.length === 0) return;
+      if (appState.activeTvModalKey) closeTvModal();
+
+      const total = appState.currentTvCardKeys.length;
+      if (appState.focusedCardIndex === -1) {
+        appState.focusedCardIndex = 0;
+      } else if (direction === 'right' || direction === 'down') {
+        appState.focusedCardIndex = (appState.focusedCardIndex + 1) % total;
+      } else {
+        appState.focusedCardIndex = (appState.focusedCardIndex - 1 + total) % total;
+      }
+      applyTvCardFocus();
+    }
+
+    function tvPadOk() {
+      if (appState.currentTvCardKeys.length === 0) return;
+      if (appState.focusedCardIndex === -1) appState.focusedCardIndex = 0;
+      const key = appState.currentTvCardKeys[appState.focusedCardIndex];
+      openTvModal(key === 'smarthome' ? 'guide' : key);
+    }
+
+    function tvPadHome() {
+      closeTvModal();
+      appState.focusedCardIndex = -1;
+      applyTvCardFocus();
+      showTvToast('Returned to HostScreen Home.');
+    }
+
+    function adjustTvVolume(delta) {
+      appState.tvVolume = Math.max(0, Math.min(100, appState.tvVolume + delta));
+      document.getElementById('phoneVolReadout').textContent = `${appState.tvVolume}%`;
+      document.getElementById('tvVolumeText').textContent = `${appState.tvVolume}`;
+      document.getElementById('tvVolumeFill').style.height = `${appState.tvVolume}%`;
+
+      const hud = document.getElementById('tvVolumeHud');
+      hud.classList.remove('opacity-0');
+      hud.classList.add('opacity-100');
+
+      clearTimeout(volumeHudTimer);
+      volumeHudTimer = setTimeout(() => {
+        hud.classList.remove('opacity-100');
+        hud.classList.add('opacity-0');
+      }, 2000);
+    }
+
+    // Live-Synced Smart Home Controls
+    function changeAcTemp(delta) {
+      appState.acTemp = Math.max(66, Math.min(76, appState.acTemp + delta));
+      renderTvScreen();
+      showTvToast(`Living Room AC updated to ${appState.acTemp}°F (synced to TV).`);
+    }
+
+    function toggleLivingLights() {
+      appState.lightsOn = !appState.lightsOn;
+      renderTvScreen();
+      showTvToast(appState.lightsOn ? 'Living Room Lights turned ON.' : 'Living Room Lights dimmed.');
+    }
+
+    function togglePoolHeater() {
+      appState.poolHeaterOn = !appState.poolHeaterOn;
+      renderTvScreen();
+      showTvToast(appState.poolHeaterOn ? 'Pool Heater active — warming to 85°F.' : 'Pool Heater returned to 81°F standby.');
+    }
+
+    // Curated Dining Booking Preview
+    function bookDiningSpot(spotName, msgId) {
+      const box = document.getElementById(msgId);
+      box.textContent = `Table request prepared for Alex · Party of 2 at 7:00 PM (${spotName}). Guarded reservation link ready.`;
+      box.classList.remove('hidden');
+    }
+
+    /* =========================================================================
+       ROI & SUBSCRIPTION KILLER SAVINGS CALCULATOR
+       ========================================================================= */
+    const propertySlider = document.getElementById('propertySlider');
+
+    function formatCurrency(num) {
+      return '$' + Math.round(num).toLocaleString('en-US');
+    }
+
+    function updateSavingsCalculator(units) {
+      const count = Math.max(1, Math.min(100, parseInt(units, 10) || 1));
+      propertySlider.value = count;
+
+      const monthlyPerUnit = 14.99;
+      const year1Saas = count * monthlyPerUnit * 12;
+      const year3Saas = year1Saas * 3;
+
+      const isBulk = count >= 5;
+      const hostUnitRate = isBulk ? 199 : 299;
+      const hostTotal = count * hostUnitRate;
+      const threeYearSavings = year3Saas - hostTotal;
+      const paybackMonths = Math.round(hostUnitRate / monthlyPerUnit);
+
+      document.getElementById('sliderCountDisplay').textContent = count;
+      document.getElementById('sliderUnitLabel').textContent = count === 1 ? 'Property' : 'Properties';
+      document.getElementById('saasYear1').textContent = formatCurrency(year1Saas);
+      document.getElementById('saasYear3').textContent = formatCurrency(year3Saas);
+      document.getElementById('hostTotalCost').textContent = formatCurrency(hostTotal);
+      document.getElementById('hostRateBadge').textContent = isBulk ? '$199/unit (5+ rate)' : '$299/unit (1–4 rate)';
+      document.getElementById('savingsHeadline').textContent = `You Save ${formatCurrency(threeYearSavings)} over 3 years`;
+      document.getElementById('paybackBadge').textContent = `Pays for itself in ~${paybackMonths} months`;
+
+      // Highlight matching preset button
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        const text = btn.textContent;
+        const isMatch = (count === 1 && text.includes('1 Listing')) ||
+                        (count === 10 && text.includes('10 Listings')) ||
+                        (count === 30 && text.includes('30 Listings'));
+        if (isMatch) {
+          btn.className = 'preset-btn px-3.5 py-2 rounded-xl border border-slateink bg-slateink text-linen text-xs font-display font-bold transition-colors';
+        } else {
+          btn.className = 'preset-btn px-3.5 py-2 rounded-xl border border-stoneborder bg-linen hover:border-slateink text-xs font-display font-bold text-slateink transition-colors';
+        }
+      });
+    }
+
+    function setSavingsUnits(n) {
+      updateSavingsCalculator(n);
+    }
+
+    propertySlider.addEventListener('input', (e) => updateSavingsCalculator(e.target.value));
+
+    /* =========================================================================
+       INTERACTIVE TV COMPATIBILITY CHECKER
+       ========================================================================= */
+    const TV_COMPAT_DATA = {
+      google: {
+        name: 'Google TV / Android TV',
+        badge: 'Full Native Support',
+        badgeStyle: 'bg-sage/15 border-sage/30 text-sage',
+        dotStyle: 'bg-sage',
+        desc: 'Our cleanest turnkey match. HostScreen pairs directly over your local Wi-Fi for the full welcome screen, browser phone remote, wake-on-arrival, and automatic Guest profile selection in Netflix, Prime Video, and Disney+.',
+        f1: 'Included', f2: 'Full Control', f3: 'Supported'
+      },
+      samsung: {
+        name: 'Samsung Smart TV (Tizen)',
+        badge: 'Supported via Local Hub',
+        badgeStyle: 'bg-sage/15 border-sage/30 text-sage',
+        dotStyle: 'bg-sage',
+        desc: 'Works smoothly with HostScreen’s local hub over your rental’s Wi-Fi for the full welcome screen, QR Wi-Fi, and browser phone remote. If you also want automated Guest streaming profiles, we can pair a tiny $25 4K Google TV stick behind the bezel.',
+        f1: 'Included', f2: 'Full Control', f3: 'Via 4K Stick'
+      },
+      lg: {
+        name: 'LG Smart TV (webOS)',
+        badge: 'Supported via Local Hub',
+        badgeStyle: 'bg-sage/15 border-sage/30 text-sage',
+        dotStyle: 'bg-sage',
+        desc: 'HostScreen connects cleanly to LG webOS TVs for power, volume, input switching, and your custom arrival welcome screen. For fleets that want identical streaming-app guest profiles across every room, we offer an optional pre-loaded 4K Google TV stick.',
+        f1: 'Included', f2: 'Full Control', f3: 'Via 4K Stick'
+      },
+      roku: {
+        name: 'Roku TV / Roku Stick',
+        badge: 'Supported via Local Hub',
+        badgeStyle: 'bg-sage/15 border-sage/30 text-sage',
+        dotStyle: 'bg-sage',
+        desc: 'Pairs seamlessly over local Wi-Fi using Roku’s built-in local control protocol for remote navigation, volume, and app launching alongside the HostScreen welcome display. Zero monthly Roku or third-party app fees required.',
+        f1: 'Included', f2: 'Full Control', f3: 'Guest Mode'
+      },
+      fire: {
+        name: 'Amazon Fire TV',
+        badge: 'Full Native Support',
+        badgeStyle: 'bg-sage/15 border-sage/30 text-sage',
+        dotStyle: 'bg-sage',
+        desc: 'Because Fire TV runs on Android under the hood, HostScreen integrates cleanly for welcome screen display, browser phone remote control, and direct app launching. We handle all setup steps beforehand so guests never see Amazon clutter.',
+        f1: 'Included', f2: 'Full Control', f3: 'Supported'
+      },
+      apple: {
+        name: 'Apple TV',
+        badge: 'Supported via Local Hub',
+        badgeStyle: 'bg-brass/20 border-brass/40 text-slateink',
+        dotStyle: 'bg-brass',
+        desc: 'HostScreen connects to Apple TV for crisp local remote control and pairs with your TV’s HDMI input to show the personalized welcome screen on arrival. We configure HDMI-CEC so guests move seamlessly between the welcome screen and Apple TV.',
+        f1: 'Included', f2: 'Full Control', f3: 'Apple Profiles'
+      },
+      hisense: {
+        name: 'Hisense / Philips',
+        badge: 'Beta / Full on Google OS',
+        badgeStyle: 'bg-brass/20 border-brass/40 text-slateink',
+        dotStyle: 'bg-brass',
+        desc: 'Most recent Hisense and Philips models run Google TV natively for full support; proprietary VIDAA/Saphi models are in beta. To guarantee rock-solid reliability on non-Google sets, HostScreen includes an optional low-cost 4K Google TV stick pre-configured in your kit.',
+        f1: 'Included', f2: 'Full / Stick', f3: 'Google OS / Stick'
+      },
+      vizio: {
+        name: 'VIZIO / Older Non-Smart TV',
+        badge: 'Plug-in 4K Stick Recommended',
+        badgeStyle: 'bg-brass/20 border-brass/40 text-slateink',
+        dotStyle: 'bg-brass',
+        desc: 'No need to replace a perfectly good TV on your wall. HostScreen bundles a pre-configured $25 4K Google TV stick into your kit so even a 10-year-old TV gets the exact same boutique welcome screen, Wi-Fi QR, phone remote, and Guest profiles.',
+        f1: 'Via 4K Stick', f2: 'Full Control', f3: 'Supported'
+      }
+    };
+
+    document.querySelectorAll('.tv-brand-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const key = pill.dataset.brand;
+        const info = TV_COMPAT_DATA[key];
+        if (!info) return;
+
+        // Update active pill styling
+        document.querySelectorAll('.tv-brand-pill').forEach(p => {
+          if (p.dataset.brand === key) {
+            p.className = 'tv-brand-pill px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm bg-slateink text-linen border border-slateink shadow-sm transition-all';
+          } else {
+            p.className = 'tv-brand-pill px-4 py-2.5 rounded-xl font-display font-bold text-xs sm:text-sm bg-white text-slateink border border-stoneborder hover:border-slateink transition-all';
+          }
+        });
+
+        document.getElementById('compatBrandName').textContent = info.name;
+        const badgeEl = document.getElementById('compatBadge');
+        badgeEl.className = `inline-flex items-center gap-2 self-start sm:self-auto px-3.5 py-1.5 rounded-full border font-mono text-xs font-medium ${info.badgeStyle}`;
+        badgeEl.innerHTML = `<span class="w-2 h-2 rounded-full ${info.dotStyle}"></span>${info.badge}`;
+        document.getElementById('compatDescription').textContent = info.desc;
+        document.getElementById('compatFeat1').textContent = info.f1;
+        document.getElementById('compatFeat2').textContent = info.f2;
+        document.getElementById('compatFeat3').textContent = info.f3;
+      });
+    });
+
+    /* =========================================================================
+       PILOT & QUOTE REQUEST MODAL (STATIC GITHUB PAGES READY)
+       ========================================================================= */
+    const pilotModal = document.getElementById('pilotModal');
+    const modalFeedback = document.getElementById('modalFeedback');
+
+    function openPilotModal(prefTier) {
+      if (prefTier) {
+        document.getElementById('leadPreference').value = prefTier;
+      }
+      modalFeedback.classList.add('hidden');
+      pilotModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => document.getElementById('leadName').focus(), 50);
+    }
+
+    function closePilotModal() {
+      pilotModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !pilotModal.classList.contains('hidden')) {
+        closePilotModal();
+      }
+    });
+
+    function showModalFeedback(message, isError) {
+      modalFeedback.textContent = message;
+      modalFeedback.className = isError
+        ? 'mb-4 px-4 py-3 rounded-xl text-xs font-medium bg-brass/15 border border-brass/50 text-slateink'
+        : 'mb-4 px-4 py-3 rounded-xl text-xs font-medium bg-sage/15 border border-sage/35 text-sage';
+      modalFeedback.classList.remove('hidden');
+    }
+
+    function collectInquiryData() {
+      const name = document.getElementById('leadName').value.trim();
+      const company = document.getElementById('leadCompany').value.trim();
+      const email = document.getElementById('leadEmail').value.trim();
+      const units = document.getElementById('leadUnits').value.trim() || '1';
+      const tvBrand = document.getElementById('leadTvBrand').value;
+      const preference = document.getElementById('leadPreference').value;
+      const notes = document.getElementById('leadNotes').value.trim() || 'None';
+
+      if (!name || !company || !email) {
+        showModalFeedback('Please fill in your Name, Company/Property Name, and Email Address first.', true);
+        return null;
+      }
+
+      const summary = [
+        'HostScreen Setup / Pilot Inquiry',
+        '--------------------------------',
+        `Name: ${name}`,
+        `Company / Property: ${company}`,
+        `Email: ${email}`,
+        `Number of Listings: ${units}`,
+        `Primary TV Brand: ${tvBrand}`,
+        `Rollout Preference: ${preference}`,
+        `Notes: ${notes}`
+      ].join('\n');
+
+      return { name, company, email, units, tvBrand, preference, notes, summary };
+    }
+
+    function handleOpenEmail() {
+      const data = collectInquiryData();
+      if (!data) return;
+
+      try {
+        const subject = encodeURIComponent(`HostScreen Inquiry — ${data.preference} (${data.company})`);
+        const body = encodeURIComponent(data.summary);
+        window.location.href = `mailto:${HOSTSCREEN_CONFIG.contactEmail}?subject=${subject}&body=${body}`;
+        showModalFeedback(`Opened your email client addressed to ${HOSTSCREEN_CONFIG.contactEmail}. You can also copy the summary below.`, false);
+      } catch (err) {
+        showModalFeedback('Could not launch an email app automatically—click "Copy Inquiry Summary" to paste it directly.', true);
+      }
+    }
+
+    function handleCopySummary() {
+      const data = collectInquiryData();
+      if (!data) return;
+
+      const copied = copyTextSafely(data.summary);
+      const btn = document.getElementById('copySummaryBtn');
+      const btnText = document.getElementById('copySummaryBtnText');
+
+      if (copied) {
+        btn.classList.remove('bg-linen', 'border-stoneborder', 'text-slateink');
+        btn.classList.add('bg-sage', 'border-sage', 'text-white');
+        btnText.textContent = 'Copied to Clipboard!';
+        showModalFeedback('Inquiry summary copied! Paste it into an email, text, or DM whenever you’re ready.', false);
+
+        setTimeout(() => {
+          btn.classList.remove('bg-sage', 'border-sage', 'text-white');
+          btn.classList.add('bg-linen', 'border-stoneborder', 'text-slateink');
+          btnText.textContent = 'Copy Inquiry Summary';
+        }, 2500);
+      } else {
+        showModalFeedback('Clipboard access was restricted—try "Open Pre-Filled Email" instead.', true);
+      }
+    }
+
+    /* =========================================================================
+       MOBILE NAVIGATION DRAWER
+       ========================================================================= */
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuIconOpen = document.getElementById('menuIconOpen');
+    const menuIconClose = document.getElementById('menuIconClose');
+
+    function toggleMobileMenu(forceClose) {
+      const isHidden = mobileMenu.classList.contains('hidden');
+      const shouldOpen = forceClose ? false : isHidden;
+      mobileMenu.classList.toggle('hidden', !shouldOpen);
+      menuIconOpen.classList.toggle('hidden', shouldOpen);
+      menuIconClose.classList.toggle('hidden', !shouldOpen);
+      mobileMenuBtn.setAttribute('aria-expanded', String(shouldOpen));
+    }
+
+    mobileMenuBtn.addEventListener('click', () => toggleMobileMenu(false));
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => toggleMobileMenu(true));
+    });
+
+    /* =========================================================================
+       INITIALIZATION
+       ========================================================================= */
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('footerYear').textContent = new Date().getFullYear();
+      renderTvScreen();
+      updateSavingsCalculator(10);
+    });
+  </script>
+</body>
+</html>
