@@ -1241,7 +1241,7 @@
                 Request Your Pilot or Setup Quote
               </h3>
               <p class="text-xs sm:text-sm text-slateink/65 mt-1">
-                Fill in a few quick details—send directly from your email app or copy a formatted summary to paste anywhere.
+                Fill in a few quick details and send your request—we’ll reply within 1 business day.
               </p>
             </div>
             <button type="button" onclick="closePilotModal()" aria-label="Close modal" class="p-2 rounded-xl bg-linen hover:bg-stoneborder/60 text-slateink transition-colors">
@@ -1307,9 +1307,9 @@
 
             <!-- Static GitHub Pages Actions -->
             <div class="pt-2 flex flex-col sm:flex-row gap-3">
-              <button type="button" onclick="handleOpenEmail()" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slateink text-linen font-display font-bold text-sm hover:bg-slateink/90 active:scale-[0.98] transition-all shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                <span>Open Pre-Filled Email</span>
+              <button type="button" id="sendInquiryBtn" onclick="handleSendInquiry()" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slateink text-linen font-display font-bold text-sm hover:bg-slateink/90 active:scale-[0.98] transition-all shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                <span id="sendInquiryBtnText">Send Request</span>
               </button>
               <button type="button" id="copySummaryBtn" onclick="handleCopySummary()" class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linen border-2 border-stoneborder hover:border-slateink text-slateink font-display font-bold text-sm active:scale-[0.98] transition-all">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
@@ -1333,7 +1333,7 @@
        ========================================================================= */
     const HOSTSCREEN_CONFIG = {
       contactEmail: 'HostScreen.co@pm.me',
-      formspreeEndpoint: '' // Optional: paste Formspree URL if desired
+      formspreeEndpoint: 'https://formspree.io/f/maeoaaby'
     };
 
     /* =========================================================================
@@ -2241,17 +2241,40 @@
       return { name, company, email, units, tvBrand, preference, notes, summary };
     }
 
-    function handleOpenEmail() {
+    async function handleSendInquiry() {
       const data = collectInquiryData();
       if (!data) return;
 
+      const btn = document.getElementById('sendInquiryBtn');
+      const btnText = document.getElementById('sendInquiryBtnText');
+      btn.disabled = true;
+      btnText.textContent = 'Sending…';
+
       try {
-        const subject = encodeURIComponent(`HostScreen Inquiry — ${data.preference} (${data.company})`);
-        const body = encodeURIComponent(data.summary);
-        window.location.href = `mailto:${HOSTSCREEN_CONFIG.contactEmail}?subject=${subject}&body=${body}`;
-        showModalFeedback(`Opened your email client addressed to ${HOSTSCREEN_CONFIG.contactEmail}. You can also copy the summary below.`, false);
+        const res = await fetch(HOSTSCREEN_CONFIG.formspreeEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({
+            name: data.name,
+            email: data.email,
+            company: data.company,
+            listings: data.units,
+            tv_brand: data.tvBrand,
+            rollout_preference: data.preference,
+            notes: data.notes,
+            _subject: `HostScreen Inquiry — ${data.preference} (${data.company})`
+          })
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        document.getElementById('pilotForm').reset();
+        document.getElementById('leadUnits').value = '1';
+        showModalFeedback('Thanks! Your request was sent—we’ll reply within 1 business day.', false);
+        btnText.textContent = 'Sent ✓';
+        setTimeout(() => { btnText.textContent = 'Send Request'; btn.disabled = false; }, 3000);
       } catch (err) {
-        showModalFeedback('Could not launch an email app automatically—click "Copy Inquiry Summary" to paste it directly.', true);
+        showModalFeedback(`Couldn’t send right now. Please try again, or email us at ${HOSTSCREEN_CONFIG.contactEmail} (use "Copy Inquiry Summary" to paste your details).`, true);
+        btnText.textContent = 'Send Request';
+        btn.disabled = false;
       }
     }
 
@@ -2275,7 +2298,7 @@
           btnText.textContent = 'Copy Inquiry Summary';
         }, 2500);
       } else {
-        showModalFeedback('Clipboard access was restricted—try "Open Pre-Filled Email" instead.', true);
+        showModalFeedback('Clipboard access was restricted—use "Send Request" instead.', true);
       }
     }
 
